@@ -1,0 +1,6 @@
+@CinemaProject_HostAddress = http://localhost:5083
+
+GET {{CinemaProject_HostAddress}}/weatherforecast/
+Accept: application/json
+
+###

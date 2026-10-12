@@ -1,0 +1,6 @@
+<Solution>
+  <Project Path="BLL/BLL.csproj" Id="b2402051-c39e-47f2-9df1-7aed87b6d75b" />
+  <Project Path="CinemaProject/CinemaProject.csproj" />
+  <Project Path="DAL/DAL.csproj" Id="4140ad85-ae71-4af1-a20b-d6e50f67e246" />
+  <Project Path="Domain/Domain.csproj" Id="979b5854-bb24-4a77-9e06-dc09725eb37f" />
+</Solution>
