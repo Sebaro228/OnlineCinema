@@ -1,4 +1,5 @@
 ﻿using Azure.Core;
+using Domain.Models;
 using Microsoft.EntityFrameworkCore;
 using System;
 using System.Collections.Generic;
@@ -14,5 +15,8 @@ namespace DAL.Context
         {
             base.OnModelCreating(modelBuilder);
         }
+        public DbSet<Film> Films { get; set; }
+        public DbSet<User> Users { get; set; }
+        public DbSet<RefreshToken> RefreshTokens { get; set; }
     }
 }

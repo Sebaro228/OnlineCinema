@@ -10,3 +10,16 @@ C:\Users\SAS\Documents\GitHub\AI_Assistant_Project\CinemaProject\Domain\obj\Debu
 C:\Users\SAS\Documents\GitHub\AI_Assistant_Project\CinemaProject\Domain\obj\Debug\net8.0\Domain.pdb
 C:\Users\SAS\Documents\GitHub\AI_Assistant_Project\CinemaProject\Domain\obj\Debug\net8.0\ref\Domain.dll
 C:\Users\SAS\Documents\GitHub\AI_Assistant_Project\CinemaProject\Domain\obj\Debug\net8.0\Domain.csproj.Up2Date
+D:\ASPnet\Projects\OnlineCinema\Domain\bin\Debug\net8.0\Domain.deps.json
+D:\ASPnet\Projects\OnlineCinema\Domain\bin\Debug\net8.0\Domain.dll
+D:\ASPnet\Projects\OnlineCinema\Domain\bin\Debug\net8.0\Domain.pdb
+D:\ASPnet\Projects\OnlineCinema\Domain\obj\Debug\net8.0\Domain.GeneratedMSBuildEditorConfig.editorconfig
+D:\ASPnet\Projects\OnlineCinema\Domain\obj\Debug\net8.0\Domain.AssemblyInfoInputs.cache
+D:\ASPnet\Projects\OnlineCinema\Domain\obj\Debug\net8.0\Domain.AssemblyInfo.cs
+D:\ASPnet\Projects\OnlineCinema\Domain\obj\Debug\net8.0\Domain.csproj.CoreCompileInputs.cache
+D:\ASPnet\Projects\OnlineCinema\Domain\obj\Debug\net8.0\Domain.sourcelink.json
+D:\ASPnet\Projects\OnlineCinema\Domain\obj\Debug\net8.0\Domain.dll
+D:\ASPnet\Projects\OnlineCinema\Domain\obj\Debug\net8.0\refint\Domain.dll
+D:\ASPnet\Projects\OnlineCinema\Domain\obj\Debug\net8.0\Domain.pdb
+D:\ASPnet\Projects\OnlineCinema\Domain\obj\Debug\net8.0\ref\Domain.dll
+D:\ASPnet\Projects\OnlineCinema\Domain\obj\Debug\net8.0\Domain.csproj.Up2Date

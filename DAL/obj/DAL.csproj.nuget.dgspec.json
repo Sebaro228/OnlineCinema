@@ -1,23 +1,23 @@
 {
   "format": 1,
   "restore": {
-    "C:\\Users\\SAS\\Documents\\GitHub\\AI_Assistant_Project\\CinemaProject\\DAL\\DAL.csproj": {}
+    "D:\\ASPnet\\Projects\\OnlineCinema\\DAL\\DAL.csproj": {}
   },
   "projects": {
-    "C:\\Users\\SAS\\Documents\\GitHub\\AI_Assistant_Project\\CinemaProject\\DAL\\DAL.csproj": {
+    "D:\\ASPnet\\Projects\\OnlineCinema\\DAL\\DAL.csproj": {
       "version": "1.0.0",
       "restore": {
-        "projectUniqueName": "C:\\Users\\SAS\\Documents\\GitHub\\AI_Assistant_Project\\CinemaProject\\DAL\\DAL.csproj",
+        "projectUniqueName": "D:\\ASPnet\\Projects\\OnlineCinema\\DAL\\DAL.csproj",
         "projectName": "DAL",
-        "projectPath": "C:\\Users\\SAS\\Documents\\GitHub\\AI_Assistant_Project\\CinemaProject\\DAL\\DAL.csproj",
-        "packagesPath": "C:\\Users\\SAS\\.nuget\\packages\\",
-        "outputPath": "C:\\Users\\SAS\\Documents\\GitHub\\AI_Assistant_Project\\CinemaProject\\DAL\\obj\\",
+        "projectPath": "D:\\ASPnet\\Projects\\OnlineCinema\\DAL\\DAL.csproj",
+        "packagesPath": "C:\\Users\\Home\\.nuget\\packages\\",
+        "outputPath": "D:\\ASPnet\\Projects\\OnlineCinema\\DAL\\obj\\",
         "projectStyle": "PackageReference",
         "fallbackFolders": [
           "C:\\Program Files (x86)\\Microsoft Visual Studio\\Shared\\NuGetPackages"
         ],
         "configFilePaths": [
-          "C:\\Users\\SAS\\AppData\\Roaming\\NuGet\\NuGet.Config",
+          "C:\\Users\\Home\\AppData\\Roaming\\NuGet\\NuGet.Config",
           "C:\\Program Files (x86)\\NuGet\\Config\\Microsoft.VisualStudio.FallbackLocation.config",
           "C:\\Program Files (x86)\\NuGet\\Config\\Microsoft.VisualStudio.Offline.config"
         ],
@@ -33,8 +33,8 @@
             "framework": "net8.0",
             "targetAlias": "net8.0",
             "projectReferences": {
-              "C:\\Users\\SAS\\Documents\\GitHub\\AI_Assistant_Project\\CinemaProject\\Domain\\Domain.csproj": {
-                "projectPath": "C:\\Users\\SAS\\Documents\\GitHub\\AI_Assistant_Project\\CinemaProject\\Domain\\Domain.csproj"
+              "D:\\ASPnet\\Projects\\OnlineCinema\\Domain\\Domain.csproj": {
+                "projectPath": "D:\\ASPnet\\Projects\\OnlineCinema\\Domain\\Domain.csproj"
               }
             }
           }
@@ -88,20 +88,6 @@
           ],
           "assetTargetFallback": true,
           "warn": true,
-          "downloadDependencies": [
-            {
-              "name": "Microsoft.AspNetCore.App.Ref",
-              "version": "[8.0.31, 8.0.31]"
-            },
-            {
-              "name": "Microsoft.NETCore.App.Ref",
-              "version": "[8.0.31, 8.0.31]"
-            },
-            {
-              "name": "Microsoft.WindowsDesktop.App.Ref",
-              "version": "[8.0.31, 8.0.31]"
-            }
-          ],
           "frameworkReferences": {
             "Microsoft.NETCore.App": {
               "privateAssets": "all"
@@ -111,20 +97,20 @@
         }
       }
     },
-    "C:\\Users\\SAS\\Documents\\GitHub\\AI_Assistant_Project\\CinemaProject\\Domain\\Domain.csproj": {
+    "D:\\ASPnet\\Projects\\OnlineCinema\\Domain\\Domain.csproj": {
       "version": "1.0.0",
       "restore": {
-        "projectUniqueName": "C:\\Users\\SAS\\Documents\\GitHub\\AI_Assistant_Project\\CinemaProject\\Domain\\Domain.csproj",
+        "projectUniqueName": "D:\\ASPnet\\Projects\\OnlineCinema\\Domain\\Domain.csproj",
         "projectName": "Domain",
-        "projectPath": "C:\\Users\\SAS\\Documents\\GitHub\\AI_Assistant_Project\\CinemaProject\\Domain\\Domain.csproj",
-        "packagesPath": "C:\\Users\\SAS\\.nuget\\packages\\",
-        "outputPath": "C:\\Users\\SAS\\Documents\\GitHub\\AI_Assistant_Project\\CinemaProject\\Domain\\obj\\",
+        "projectPath": "D:\\ASPnet\\Projects\\OnlineCinema\\Domain\\Domain.csproj",
+        "packagesPath": "C:\\Users\\Home\\.nuget\\packages\\",
+        "outputPath": "D:\\ASPnet\\Projects\\OnlineCinema\\Domain\\obj\\",
         "projectStyle": "PackageReference",
         "fallbackFolders": [
           "C:\\Program Files (x86)\\Microsoft Visual Studio\\Shared\\NuGetPackages"
         ],
         "configFilePaths": [
-          "C:\\Users\\SAS\\AppData\\Roaming\\NuGet\\NuGet.Config",
+          "C:\\Users\\Home\\AppData\\Roaming\\NuGet\\NuGet.Config",
           "C:\\Program Files (x86)\\NuGet\\Config\\Microsoft.VisualStudio.FallbackLocation.config",
           "C:\\Program Files (x86)\\NuGet\\Config\\Microsoft.VisualStudio.Offline.config"
         ],
@@ -169,20 +155,6 @@
           ],
           "assetTargetFallback": true,
           "warn": true,
-          "downloadDependencies": [
-            {
-              "name": "Microsoft.AspNetCore.App.Ref",
-              "version": "[8.0.31, 8.0.31]"
-            },
-            {
-              "name": "Microsoft.NETCore.App.Ref",
-              "version": "[8.0.31, 8.0.31]"
-            },
-            {
-              "name": "Microsoft.WindowsDesktop.App.Ref",
-              "version": "[8.0.31, 8.0.31]"
-            }
-          ],
           "frameworkReferences": {
             "Microsoft.NETCore.App": {
               "privateAssets": "all"
