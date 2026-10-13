@@ -4,6 +4,19 @@
     "title": "CinemaProject",
     "version": "1.0"
   },
-  "paths": { },
+  "paths": {
+    "/api/Film": {
+      "get": {
+        "tags": [
+          "Film"
+        ],
+        "responses": {
+          "200": {
+            "description": "OK"
+          }
+        }
+      }
+    }
+  },
   "components": { }
 }

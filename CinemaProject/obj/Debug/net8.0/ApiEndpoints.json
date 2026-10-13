@@ -1,1 +1,12 @@
-[]
+[
+  {
+    "ContainingType": "CinemaProject.Controllers.FilmController",
+    "Method": "Test",
+    "RelativePath": "api/Film",
+    "HttpMethod": "GET",
+    "IsController": true,
+    "Order": 0,
+    "Parameters": [],
+    "ReturnTypes": []
+  }
+]
