@@ -34,7 +34,7 @@ namespace BLL.Services
         public async Task<(bool success, string message, AuthResponse? response)> RefreshTokenAsync(string token)
         {
             var refreshTokenEntity = await refreshTokenRepository.GetRefreshAsync(token);
-            if (refreshTokenEntity == null && refreshTokenEntity.IsExpired && !refreshTokenEntity.IsActive)
+            if (refreshTokenEntity == null || refreshTokenEntity.IsExpired || !refreshTokenEntity.IsActive)
             {
                 return (false, "Invalid refresh token", null);
             }
