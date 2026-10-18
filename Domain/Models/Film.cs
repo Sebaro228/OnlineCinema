@@ -2,6 +2,6 @@
 {
     public class Film
     {
-
+        public int Id { get; set; }
     }
 }

@@ -16,7 +16,7 @@ namespace BLL.Services
     {
         public string GetJwt(User user)
         {
-            var key = configuration["Key"];
+            var key = configuration["Jwt:Key"];
             var issuer = configuration["Jwt:Issuer "];
             var ausience = configuration["Jwt:Audience"];
             var exp = int.Parse(configuration["Jwt:ExpireMinutes"]);
