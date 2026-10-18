@@ -1,3 +1,5 @@
+using Azure.Identity;
+using Azure.Storage.Blobs;
 using BLL.Interfaces;
 using BLL.Services;
 using DAL.Context;
@@ -15,11 +17,29 @@ builder.Services.AddControllers();
 builder.Services.AddEndpointsApiExplorer();
 builder.Services.AddSwaggerGen();
 
-builder.Services.AddDbContext<CinemaContext >(opts =>
-    opts.UseSqlServer(builder.Configuration.GetConnectionString("DefaultConnection")));
+var keyVaultUri = new Uri("https://forcinemaproject.vault.azure.net/");
+builder.Configuration.AddAzureKeyVault(
+    keyVaultUri,
+    new DefaultAzureCredential()
+);
 
-builder.Services.AddTransient<IService<Film>, FilmService>();
-builder.Services.AddTransient<IRepository<Film>, FilmRepository>();
+builder.Services.AddDbContext<CinemaContext>(opts =>
+    opts.UseSqlServer(builder.Configuration.GetConnectionString("CinemaDb")));
+
+builder.Services.AddSingleton(serviceProvider =>
+{
+    var configuration = serviceProvider.GetRequiredService<IConfiguration>();
+
+    var connectionString =
+        configuration["Storage:ConnectionString"]
+        ?? throw new InvalidOperationException(
+            "Storage connection string is not configured.");
+
+    return new BlobServiceClient(connectionString);
+});
+
+builder.Services.AddTransient<FilmRepository>();
+builder.Services.AddTransient<FilmService>();
 
 var app = builder.Build();
 

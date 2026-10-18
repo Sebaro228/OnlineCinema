@@ -24,10 +24,10 @@ namespace DAL.Repository
         public virtual async Task<bool> AnyAsync(Expression<Func<T, bool>> pred)
             => await _dbSet.AnyAsync(pred);
 
-        public async Task CreateAsync(T item)
+        public virtual async Task CreateAsync(T item)
             => await _dbSet.AddAsync(item);
 
-        public async Task DeleteAsync(T item)
+        public virtual async Task DeleteAsync(T item)
             => _dbSet.Remove(item);
 
         public virtual async Task<T?> FirstOrDefaultAsync(Expression<Func<T, bool>> pred)
@@ -39,10 +39,10 @@ namespace DAL.Repository
         public virtual async Task<T?> GetAsync(int id)
             => await _dbSet.FindAsync(id);
 
-        public async Task SaveChangeAsync()
+        public virtual async Task SaveChangeAsync()
             => await _context.SaveChangesAsync();
 
-        public void Update(T item)
+        public virtual void Update(T item)
             => _dbSet.Update(item);
     }
 }
