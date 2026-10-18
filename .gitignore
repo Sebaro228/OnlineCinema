@@ -10,6 +10,10 @@
 *.userosscache
 *.sln.docstates
 *.env
+.env.*
+!.env.example
+!.env.sample
+!.env.template
 
 # User-specific files (MonoDevelop/Xamarin Studio)
 *.userprefs
@@ -23,20 +27,6 @@ mono_crash.*
 [Rr]elease/
 [Rr]eleases/
 
-[Dd]ebug/x64/
-[Dd]ebugPublic/x64/
-[Rr]elease/x64/
-[Rr]eleases/x64/
-bin/x64/
-obj/x64/
-
-[Dd]ebug/x86/
-[Dd]ebugPublic/x86/
-[Rr]elease/x86/
-[Rr]eleases/x86/
-bin/x86/
-obj/x86/
-
 [Ww][Ii][Nn]32/
 [Aa][Rr][Mm]/
 [Aa][Rr][Mm]64/
@@ -48,7 +38,7 @@ bld/
 [Ll]ogs/
 
 # Build results on 'Bin' directories
-**/[Bb]in/*
+[Bb]in/
 # Uncomment if you have tasks that rely on *.refresh files to move binaries
 # (https://github.com/github/gitignore/pull/3736)
 #!**/[Bb]in/*.refresh
@@ -426,3 +416,8 @@ FodyWeavers.xsd
 
 # Official VS Code C# Dev Kit Extension exclusion
 #*.lscache
+
+# Local IDE and operating-system state
+.idea/
+.DS_Store
+Thumbs.db
