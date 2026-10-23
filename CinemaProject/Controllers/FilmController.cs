@@ -1,5 +1,6 @@
 ﻿using BLL.Interfaces;
 using Domain.Models;
+using Microsoft.AspNetCore.Authorization;
 using Microsoft.AspNetCore.Http;
 using Microsoft.AspNetCore.Mvc;
 
@@ -15,7 +16,7 @@ namespace CinemaProject.Controllers
         {
             _service = service;
         }
-
+        [Authorize]
         [HttpGet]
         public IActionResult Test()
         {
