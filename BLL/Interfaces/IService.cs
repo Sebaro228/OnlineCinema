@@ -11,7 +11,7 @@ namespace BLL.Interfaces
     {
         Task CreateAsync(T item);
         Task UpdateAsync(T item);
-        Task<(bool, string)> DeleteAsync(int id);
+        Task DeleteAsync(int id);
         Task<T?> GetAsync(int id);
         Task<IEnumerable<T>> GetAllAsync();
         Task<T?> FirstOrDefaultAsync(Expression<Func<T, bool>> pred);

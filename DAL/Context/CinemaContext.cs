@@ -1,4 +1,5 @@
 ﻿using Azure.Core;
+using Domain.Models;
 using Microsoft.EntityFrameworkCore;
 using System;
 using System.Collections.Generic;
@@ -8,11 +9,20 @@ using System.Threading.Tasks;
 
 namespace DAL.Context
 {
-    public class CinemaContext(DbContextOptions<CinemaContext> opts) : DbContext(opts)
-    {
-        protected override void OnModelCreating(ModelBuilder modelBuilder)
+        public class CinemaContext(DbContextOptions<CinemaContext> opts) : DbContext(opts)
         {
-            base.OnModelCreating(modelBuilder);
+            public DbSet<Film> Films { get; set; }
+            public DbSet<Trailer> Trailers { get; set; }
+
+        protected override void OnModelCreating(ModelBuilder modelBuilder)
+            {
+                base.OnModelCreating(modelBuilder);
+
+                modelBuilder.Entity<Film>()
+                    .HasMany(f => f.Trailers)
+                    .WithOne(t => t.Film)
+                    .HasForeignKey(t => t.FilmId)
+                    .OnDelete(DeleteBehavior.Cascade);
+            }
         }
-    }
 }

@@ -2,6 +2,7 @@ using Azure.Identity;
 using Azure.Storage.Blobs;
 using BLL.Interfaces;
 using BLL.Services;
+using CinemaProject.Mapper;
 using DAL.Context;
 using DAL.Interfaces;
 using DAL.Repository;
@@ -24,7 +25,10 @@ builder.Configuration.AddAzureKeyVault(
 );
 
 builder.Services.AddDbContext<CinemaContext>(opts =>
-    opts.UseSqlServer(builder.Configuration.GetConnectionString("CinemaDb")));
+    opts.UseSqlServer(
+        builder.Configuration.GetConnectionString("CinemaDb"),
+        sqlOpts => sqlOpts.EnableRetryOnFailure()
+    ));
 
 builder.Services.AddSingleton(serviceProvider =>
 {
@@ -37,6 +41,10 @@ builder.Services.AddSingleton(serviceProvider =>
 
     return new BlobServiceClient(connectionString);
 });
+
+builder.Services.AddAutoMapper(
+    cfg => { },
+    typeof(CinemaMapperProfile));
 
 builder.Services.AddTransient<FilmRepository>();
 builder.Services.AddTransient<FilmService>();

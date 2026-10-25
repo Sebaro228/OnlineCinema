@@ -11,15 +11,22 @@ namespace DAL.Interfaces
     {
         public Task SavePosterAsync(Film f, Stream s);
         public Task SaveVideoAsync(Film f, Stream s);
-        public Task SaveTrailerAsync(Film f, Stream s);
+        public Task SaveTrailerDataAsync(Film f, Trailer t);
+        public Task SaveTrailerFileAsync(Trailer T, Stream s);
 
         public Task<Stream> GetPosterAsync(Film f);
         public Task<Stream> GetVideoAsync(Film f);
-        public Task<IEnumerable<Stream>> GetTrailersAsync(Film f);
+        public Task<Trailer?> GetTrailerDataAsync(int trailerId);
+        public Task<Stream> GetTrailerFileAsync(int trailerId);
 
         public Task DeletePosterAsync(Film f);
         public Task DeleteVideoAsync(Film f);
-        public Task DeleteTrailerAsync(Film f, int id);
+        public void DeleteTrailerDataAsync(Trailer t);
+        public Task DeleteTrailerFileAsync(Trailer t);
         public Task DeleteAllTrailersAsync(Film f);
+
+
+
+        public void UpdateTrailerData(Trailer t);
     }
 }

@@ -11,19 +11,22 @@ namespace BLL.Interfaces
     {
         public Task CratePosterAsync(Film f, Stream s);
         public Task CreateVideoAsync(Film f, Stream s);
-        public Task CreateTrailerAsync(Film f, Stream s);
+        public Task CreateTrailerDataAsync(Film f, Trailer t);
+        public Task CreateTrailerFileAsync(Trailer t,  Stream s);
 
         public Task<Stream> GetPosterAsync(Film f);
         public Task<Stream> GetVideoAsync(Film f);
-        public Task<IEnumerable<Stream>> GetTrailersAsync(Film f);
+        public Task<Trailer?> GetTrailerDataAsync(int id);
+        public Task<Stream> GetTrailerFileAsync(int id);
 
-        public Task<(bool, string)> DeletePosterAsync(Film f);
-        public Task<(bool, string)> DeleteVideoAsync(Film f);
-        public Task<(bool, string)> DeleteTrailerAsync(Film f, int id);
-        public Task<(bool, string)> DeleteAllTrailersAsync(Film f);
+        public Task DeletePosterAsync(Film f);
+        public Task DeleteVideoAsync(Film f);
+        public Task DeleteTrailerDataAsync(Film f, int id);
+        public Task DeleteTrailerFileAsync(Film f, int id);
 
-        public Task UpdatePosterAsync(Film f);
-        public Task UpdateVideoAsync(Film f);
-        public Task UpdateTrailerAsync(Film f, int id);
+        public Task UpdatePosterAsync(Film f, Stream s, string newExt, string newMime);
+        public Task UpdateVideoAsync(Film f, Stream s, string newExt, string newMime);
+        public Task UpdateTrailerDataAsync(Trailer t);
+        public Task UpdateTrailerFileAsync(Trailer t, Stream s, string newExt, string newMime);
     }
 }
