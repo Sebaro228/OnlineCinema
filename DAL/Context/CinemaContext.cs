@@ -25,4 +25,11 @@ namespace DAL.Context
                     .OnDelete(DeleteBehavior.Cascade);
             }
         }
+<<<<<<< HEAD
+=======
+        public DbSet<Film> Films { get; set; }
+        public DbSet<User> Users { get; set; }
+        public DbSet<RefreshToken> RefreshTokens { get; set; }
+    }
+>>>>>>> origin/main
 }

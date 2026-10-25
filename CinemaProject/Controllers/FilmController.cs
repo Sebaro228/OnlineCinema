@@ -3,6 +3,7 @@ using BLL.Interfaces;
 using BLL.Services;
 using Domain.DTOs;
 using Domain.Models;
+using Microsoft.AspNetCore.Authorization;
 using Microsoft.AspNetCore.Http;
 using Microsoft.AspNetCore.Mvc;
 
@@ -21,6 +22,15 @@ namespace CinemaProject.Controllers
             _mapper = mapper;
         }
 
+<<<<<<< HEAD
+=======
+        [Authorize]
+        [HttpGet("test")]
+        public IActionResult Test()
+        {
+            return Ok("Stable");
+        }
+>>>>>>> origin/main
 
 
         [HttpPost("Create")]
