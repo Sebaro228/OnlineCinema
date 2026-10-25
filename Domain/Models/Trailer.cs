@@ -2,6 +2,7 @@
 using System.Collections.Generic;
 using System.Linq;
 using System.Text;
+using System.Text.Json.Serialization;
 using System.Threading.Tasks;
 
 namespace Domain.Models
@@ -14,6 +15,7 @@ namespace Domain.Models
         public string Mime { get; set; } = string.Empty;
         public DateOnly Date { get; set; }
         public int FilmId { get; set; }
+        [JsonIgnore]
         public Film? Film { get; set; }
     }
 }

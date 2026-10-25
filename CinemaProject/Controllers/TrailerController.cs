@@ -97,13 +97,9 @@ namespace CinemaProject.Controllers
         }
 
         [HttpGet("Get")]
-        public async Task<IActionResult> GetTrailer(int filmId, int trailerId)
+        public async Task<IActionResult> GetTrailer(int trailerId)
         {
-            Film? f = await _service.GetAsync(filmId);
-            if (f is null)
-                return NotFound("The film has not been found");
-
-            Trailer? t = f.Trailers.FirstOrDefault(tr => tr.Id == trailerId);
+            Trailer? t = await _service.GetTrailerDataAsync(trailerId);
             if (t is null)
                 return NotFound("The trailer has not been found");
 
@@ -117,6 +113,16 @@ namespace CinemaProject.Controllers
             if (t is null)
                 return NotFound("The trailer has not been found");
             return File(await _service.GetTrailerFileAsync(trailerId), t.Mime);
+        }
+
+        [HttpGet("GetAllTrailersData")]
+        public async Task<IActionResult> GetAllTrailersData(int filmId)
+        {
+            Film? f = await _service.GetAsync(filmId);
+            if (f is null)
+                return NotFound("The film was not found");
+
+            return Ok(f.Trailers);
         }
 
         [HttpPut("UpdateData")]

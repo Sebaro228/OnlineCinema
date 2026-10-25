@@ -21,7 +21,7 @@ builder.Services.AddSwaggerGen();
 var keyVaultUri = new Uri("https://forcinemaproject.vault.azure.net/");
 builder.Configuration.AddAzureKeyVault(
     keyVaultUri,
-    new AzureCliCredential()
+    new DefaultAzureCredential()
 );
 
 builder.Services.AddDbContext<CinemaContext>(opts =>

@@ -102,11 +102,11 @@ namespace DAL.Repository
         }
 
         public async Task<Trailer?> GetTrailerDataAsync(int trailerId)
-            => _context.Trailers.FirstOrDefault(tr => tr.Id == trailerId);
+            => _context.Trailers.Include(t => t.Film).FirstOrDefault(tr => tr.Id == trailerId);
 
         public async Task<Stream> GetTrailerFileAsync(int trailerId)
         {
-            Trailer? t = _context.Trailers.FirstOrDefault(tr => tr.Id == trailerId);
+            Trailer? t = _context.Trailers.Include(t => t.Film).FirstOrDefault(tr => tr.Id == trailerId);
             if (t is null)
                 return Stream.Null;
             if (t.Film is null)
