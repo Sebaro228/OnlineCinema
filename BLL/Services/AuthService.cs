@@ -59,17 +59,14 @@ namespace BLL.Services
                 PasswordHash = BCrypt.Net.BCrypt.HashPassword(register.Password),
                 CreatedAt = DateTime.UtcNow,
             };
-            await userRepository.CreateAsync(user);
-            await userRepository.SaveChangeAsync();
-            return (true, "Success", new AuthResponse
+            var res = await userManager.CreateAsync(user, register.Password);
+            if (!res.Succeeded)
             {
-                UserName = user.UserName,
-                Email = user.Email,
-                Role = user.Role,
-                AccessToken = service.GetJwt(user),
-                RefreshToken = service.GetRefresh(user),
-                Expiration = DateTime.UtcNow.AddMinutes(15)
-            });
+                var errors = res.Errors.Select(x => x.Description);
+                return (false, string.Join('\n', errors), null);
+            }
+            var responce = await GetAuthResponceAsync(user);
+            return (true, "Success", responce);
         }
         async Task<AuthResponse> GetAuthResponceAsync(User user)
         {
