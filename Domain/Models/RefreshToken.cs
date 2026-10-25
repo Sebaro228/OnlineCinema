@@ -14,7 +14,7 @@ namespace Domain.Models
         public DateTime Created { get; set; } = DateTime.Now;
         public bool isRevoked { get; set; }
         public User User { get; set; }
-        public int UserId { get; set; }
+        public string UserId { get; set; }
         public bool IsExpired => DateTime.Now >= Expired;
         public bool IsActive => !isRevoked && !IsExpired;
     }

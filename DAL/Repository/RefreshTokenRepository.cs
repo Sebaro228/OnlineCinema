@@ -22,7 +22,7 @@ namespace DAL.Repository
             return await _dbSet.Include(x => x.User).FirstOrDefaultAsync(x => x.Token == token);
         }
 
-        public async Task RevokeAllAsync(int id)
+        public async Task RevokeAllAsync(string id)
         {
             await _dbSet.Where(x => x.UserId == id).ForEachAsync(x => x.isRevoked = true);
         }

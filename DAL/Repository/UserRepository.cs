@@ -13,6 +13,6 @@ namespace DAL.Repository
     {
         public UserRepository(CinemaContext context) : base(context) { }
         public async Task<User?> GetByEmailAsync(string email) => await _dbSet.FirstOrDefaultAsync(x => x.Email == email);
-        public async Task<User?> GetByNameAsync(string name) => await _dbSet.FirstOrDefaultAsync(x => x.Name == name);
+        public async Task<User?> GetByNameAsync(string name) => await _dbSet.FirstOrDefaultAsync(x => x.UserName == name);
     }
 }

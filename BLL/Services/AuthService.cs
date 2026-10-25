@@ -10,9 +10,10 @@ using System.Runtime.ConstrainedExecution;
 using System.Text;
 using System.Threading.Tasks;
 using BCrypt.Net;
+using Microsoft.AspNetCore.Identity;
 namespace BLL.Services
 {
-    public class AuthService(UserRepository userRepository, JwtService service, RefreshTokenRepository refreshTokenRepository)
+    public class AuthService(UserRepository userRepository, JwtService service, RefreshTokenRepository refreshTokenRepository, UserManager<User> userManager)
     {
         public async Task<(bool success, string message, AuthResponse? response)> LoginAsync(LoginRequest login)
         {
@@ -52,7 +53,7 @@ namespace BLL.Services
             if (user != null) return (false, "User is already exist", null);
             user = new User
             {
-                Name = register.UserName,
+                UserName = register.UserName,
                 Email = register.Email,
                 Role = "User",
                 PasswordHash = BCrypt.Net.BCrypt.HashPassword(register.Password),
@@ -62,7 +63,7 @@ namespace BLL.Services
             await userRepository.SaveChangeAsync();
             return (true, "Success", new AuthResponse
             {
-                UserName = user.Name,
+                UserName = user.UserName,
                 Email = user.Email,
                 Role = user.Role,
                 AccessToken = service.GetJwt(user),
@@ -88,13 +89,32 @@ namespace BLL.Services
 
             return new AuthResponse
             {
-                UserName = user.Name,
+                UserName = user.UserName,
                 Email = user.Email,
                 Role = user.Role,
                 AccessToken = jwttoken,
                 RefreshToken = refreshToken,
                 Expiration = DateTime.UtcNow.AddMinutes(15)
             };
+        }
+        public async Task<string?> GenereateTokenAsync(string email)
+        {
+            var user = await userManager.FindByEmailAsync(email);
+            if (user == null) return null;
+            var token = await userManager.GeneratePasswordResetTokenAsync(user);
+            return token;
+        }
+        public async Task<(bool success, string error)> ResetPasswordAsync(string email, string token, string newPassword)
+        {
+            var user = await userManager.FindByEmailAsync(email);
+            if (user == null) return (false, "User not found");
+            var res = await userManager.ResetPasswordAsync(user, token, newPassword);
+            if (!res.Succeeded)
+            {
+                var error = res.Errors.Select(x => x.Description);
+                return (false, string.Join(", ", error));
+            }
+            return (true, null);
         }
     }
 }

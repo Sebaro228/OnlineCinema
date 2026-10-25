@@ -5,6 +5,8 @@ using DAL.Interfaces;
 using DAL.Repository;
 using Domain.Models;
 using Microsoft.AspNetCore.Authentication.JwtBearer;
+using Microsoft.AspNetCore.Identity;
+using Microsoft.AspNetCore.Mvc.ViewFeatures;
 using Microsoft.EntityFrameworkCore;
 using Microsoft.OpenApi.Models;
 
@@ -43,10 +45,17 @@ builder.Services.AddSwaggerGen(options =>
 });
 });
 
-builder.Services.AddDbContext<CinemaContext >(opts =>
+builder.Services.AddDbContext<CinemaContext>(opts =>
     opts.UseSqlServer(builder.Configuration.GetConnectionString("DefaultConnection")));
 
-var key = builder.Configuration["Jwt:Key"]; 
+var key = builder.Configuration["Jwt:Key"];
+
+builder.Services.AddIdentity<User, IdentityRole>(options =>
+{
+    options.SignIn.RequireConfirmedEmail = true;
+})
+    .AddEntityFrameworkStores<CinemaContext>()
+    .AddDefaultTokenProviders();
 
 builder.Services.AddScoped<IService<Film>, FilmService>();
 builder.Services.AddScoped<IRepository<Film>, FilmRepository>();
@@ -61,6 +70,7 @@ builder.Services.AddScoped<UserRepository>();
 builder.Services.AddScoped<RefreshTokenRepository>();
 builder.Services.AddScoped<AuthService>();
 builder.Services.AddScoped<JwtService>();
+builder.Services.AddTransient<EmailService>();
 builder.Services.AddAuthentication(options =>
 {
     options.DefaultAuthenticateScheme = JwtBearerDefaults.AuthenticationScheme;
