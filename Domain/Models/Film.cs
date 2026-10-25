@@ -11,7 +11,5 @@
         public string VideoExtention { get; set; } = string.Empty;
         public string PosterExtention { get; set; } = string.Empty;
         public List<string> TrailersExtentions { get; set; } = new List<string>();
-
-        //public List<CrewMember> Crew
     }
 }
