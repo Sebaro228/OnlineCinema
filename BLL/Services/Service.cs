@@ -11,34 +11,32 @@ namespace BLL.Services
 {
     public class Service<T>(IRepository<T> repository) : IService<T>
     {
-        public async Task CreateAsync(T item)
+        public virtual async Task CreateAsync(T item)
         {
             await repository.CreateAsync(item);
             await repository.SaveChangeAsync();
         }
 
-        public async Task<(bool, string)> DeleteAsync(int id)
+        public virtual async Task DeleteAsync(int id)
         {
-            var i = await repository.GetAsync(id);
-            if (i == null)
-                return (false, "Error");
-
+            T? i = await repository.GetAsync(id);
+            if (i is null)
+                return;
             await repository.DeleteAsync(i);
             await repository.SaveChangeAsync();
-            return (true, "Success");
         }
 
-        public async Task<T?> FirstOrDefaultAsync(Expression<Func<T, bool>> pred)
+        public virtual async Task<T?> FirstOrDefaultAsync(Expression<Func<T, bool>> pred)
             => await repository.FirstOrDefaultAsync(pred);
 
-        public async Task<IEnumerable<T>> GetAllAsync()
+        public virtual async Task<IEnumerable<T>> GetAllAsync()
             => await repository.GetAllAsync();
 
-        public async Task<T?> GetAsync(int id)
+        public virtual async Task<T?> GetAsync(int id)
             => await repository.GetAsync(id);
 
 
-        public async Task UpdateAsync(T item)
+        public virtual async Task UpdateAsync(T item)
         {
             repository.Update(item);
             await repository.SaveChangeAsync();

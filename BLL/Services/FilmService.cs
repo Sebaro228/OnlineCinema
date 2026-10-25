@@ -11,116 +11,129 @@ using System.Threading.Tasks;
 
 namespace BLL.Services
 {
-    public class FilmService : IFilmService
+    public class FilmService : Service<Film>, IFilmService
     {
-        //Постер с другим прошлым расширением не удалится, настроить эту работу через сервис
-        //Нужно перед этим увеличить количество трейлеров в сервисе
-        //Добавить ли всем методам статусы (bool, false) или не добавлять никому
-
         private readonly FilmRepository _repository;
 
-        public FilmService(FilmRepository repository)
+        public FilmService(FilmRepository repository) : base(repository)
         {
             _repository = repository;
         }
 
-        public Task CratePosterAsync(Film f, Stream s)
+        public async Task CratePosterAsync(Film f, Stream s)
         {
-            throw new NotImplementedException();
+            await _repository.SavePosterAsync(f, s);
         }
 
-        public async Task CreateAsync(Film item)
+        public async Task CreateTrailerDataAsync(Film f, Trailer t)
         {
-            await _repository.CreateAsync(item);
+            await _repository.SaveTrailerDataAsync(f, t);
         }
 
-        public Task CreateTrailerAsync(Film f, Stream s)
+        public async Task CreateTrailerFileAsync(Trailer t, Stream s)
         {
-            throw new NotImplementedException();
+            await _repository.SaveTrailerFileAsync(t, s);
         }
 
-        public Task CreateVideoAsync(Film f, Stream s)
+        public async Task CreateVideoAsync(Film f, Stream s)
         {
-            throw new NotImplementedException();
+            await _repository.SaveVideoAsync(f, s);
         }
 
-        public Task<(bool, string)> DeleteAllTrailersAsync(Film f)
+
+
+        public async Task DeletePosterAsync(Film f)
         {
-            throw new NotImplementedException();
+            await _repository.DeletePosterAsync(f);
+            f.PosterExtension = string.Empty;
+            f.PosterMime = string.Empty;
+            await _repository.SaveChangeAsync();
         }
 
-        public async Task<(bool, string)> DeleteAsync(int id)
+        public async Task DeleteTrailerDataAsync(Film f, int id)
         {
-            Film? f = await _repository.GetAsync(id);
-            if (f is null)
-                return (false, "Film was not found");
-            await _repository.DeleteAsync(f);
-            return (true, "Success");
+            Trailer? t = f.Trailers.FirstOrDefault(t => t.Id == id);
+            if(t is null)
+                return;
+            await _repository.DeleteTrailerFileAsync(t);
+            _repository.DeleteTrailerDataAsync(t);
+            await _repository.SaveChangeAsync();
         }
 
-        public Task<(bool, string)> DeletePosterAsync(Film f)
+        public async Task DeleteTrailerFileAsync(Film f, int id)
         {
-            throw new NotImplementedException();
+            Trailer? t = f.Trailers.FirstOrDefault(t => t.Id == id);
+            if (t is null)
+                return;
+            await _repository.DeleteTrailerFileAsync(t);
+            t.Extension = string.Empty;
+            t.Mime = string.Empty;
+            await _repository.SaveChangeAsync();
         }
 
-        public Task<(bool, string)> DeleteTrailerAsync(Film f, int id)
+        public async Task DeleteVideoAsync(Film f)
         {
-            throw new NotImplementedException();
+            await _repository.DeleteVideoAsync(f);
+            f.VideoExtension = string.Empty;
+            f.PosterExtension = string.Empty;
+            await _repository.SaveChangeAsync();
         }
 
-        public Task<(bool, string)> DeleteVideoAsync(Film f)
+
+
+        public async Task<Stream> GetPosterAsync(Film f)
         {
-            throw new NotImplementedException();
+            return await _repository.GetPosterAsync(f);
         }
 
-        public async Task<Film?> FirstOrDefaultAsync(Expression<Func<Film, bool>> pred)
+        public async Task<Trailer?> GetTrailerDataAsync(int id)
         {
-            throw new NotImplementedException();
+            return await _repository.GetTrailerDataAsync(id);
         }
 
-        public async Task<IEnumerable<Film>> GetAllAsync()
+        public async Task<Stream> GetTrailerFileAsync(int id)
         {
-            return await _repository.GetAllAsync();
+            return await _repository.GetTrailerFileAsync(id);
         }
 
-        public async Task<Film?> GetAsync(int id)
+        public async Task<Stream> GetVideoAsync(Film f)
         {
-            throw new NotImplementedException();
+            return await _repository.GetVideoAsync(f);
         }
 
-        public Task<Stream> GetPosterAsync(Film f)
+
+
+        public async Task UpdatePosterAsync(Film f, Stream s, string newExt, string newMime)
         {
-            throw new NotImplementedException();
+            await _repository.DeletePosterAsync(f);
+            f.PosterMime = newMime;
+            f.PosterExtension = newExt;
+            _repository.Update(f);
+            await _repository.SavePosterAsync(f, s);
         }
 
-        public Task<IEnumerable<Stream>> GetTrailersAsync(Film f)
+        public async Task UpdateTrailerDataAsync(Trailer t)
         {
-            throw new NotImplementedException();
+            _repository.UpdateTrailerData(t);
+            await _repository.SaveChangeAsync();
         }
 
-        public Task<Stream> GetVideoAsync(Film f)
+        public async Task UpdateTrailerFileAsync(Trailer t, Stream s, string newExt, string newMime)
         {
-            throw new NotImplementedException();
+            await _repository.DeleteTrailerFileAsync(t);
+            t.Extension = newExt;
+            t.Mime = newMime;
+            _repository.UpdateTrailerData(t);
+            await _repository.SaveTrailerFileAsync(t, s);
         }
 
-        public async Task UpdateAsync(Film item)
+        public async Task UpdateVideoAsync(Film f, Stream s, string newExt, string newMime)
         {
-            throw new NotImplementedException();
-        }
-
-        public Task UpdatePosterAsync(Film f)
-        {
-            throw new NotImplementedException();
-        }
-
-        public Task UpdateTrailerAsync(Film f, int id)
-        {
-            throw new NotImplementedException();
-        }
-
-        public Task UpdateVideoAsync(Film f)
-        {
-            throw new NotImplementedException();
+            await _repository.DeleteVideoAsync(f);
+            f.VideoMime = newMime;
+            f.VideoExtension = newExt;
+            _repository.Update(f);
+            await _repository.SaveVideoAsync(f, s);
         }
     }
 }
