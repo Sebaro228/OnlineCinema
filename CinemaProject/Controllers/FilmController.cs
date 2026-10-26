@@ -22,17 +22,6 @@ namespace CinemaProject.Controllers
             _mapper = mapper;
         }
 
-<<<<<<< HEAD
-=======
-        [Authorize]
-        [HttpGet("test")]
-        public IActionResult Test()
-        {
-            return Ok("Stable");
-        }
->>>>>>> origin/main
-
-
         [HttpPost("Create")]
         public async Task<IActionResult> CreateFilm([FromBody] FilmDto dto)
         {
@@ -73,9 +62,12 @@ namespace CinemaProject.Controllers
             if (f is null)
                 return NotFound();
 
-            f.Title = dto.Title;
-            f.Year = dto.Year;
-            f.Description = dto.Description;
+            if(!string.IsNullOrEmpty(dto.Title))
+                f.Title = dto.Title;
+            if(dto.Year != 0)
+                f.Year = dto.Year;
+            if (!string.IsNullOrEmpty(dto.Description))
+                f.Description = dto.Description;
             
             await _service.UpdateAsync(f);
             return Ok();

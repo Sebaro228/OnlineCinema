@@ -5,13 +5,18 @@ using System.Linq;
 using System.Text;
 using System.Threading.Tasks;
 
-namespace Domain.Models.DTO
+namespace Domain.DTOs
 {
-    public class ForgotPassword
+    public class LoginRequest
     {
         [Required]
+        [MinLength(6)]
+        public string UserName { get; set; }
+        [Required]
         [EmailAddress]
-        [Display(Name = "Email for password resetting")]
         public string Email { get; set; }
+        [Required]
+        [MinLength(8)]
+        public string Password { get; set; }
     }
 }

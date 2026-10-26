@@ -1,6 +1,6 @@
 ﻿using DAL.Context;
 using Domain.Models;
-using Domain.Models.DTO;
+using Domain.DTOs;
 using Microsoft.EntityFrameworkCore;
 using Microsoft.IdentityModel.Tokens;
 using System;

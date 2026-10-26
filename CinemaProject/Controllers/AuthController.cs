@@ -1,6 +1,6 @@
 ﻿using BLL.Interfaces;
 using BLL.Services;
-using Domain.Models.DTO;
+using Domain.DTOs;
 using Microsoft.AspNetCore.Http;
 using Microsoft.AspNetCore.Mvc;
 

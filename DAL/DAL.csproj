@@ -10,15 +10,9 @@
 		<ProjectReference Include="..\Domain\Domain.csproj" />
 	</ItemGroup>
 
-<<<<<<< HEAD
   <ItemGroup>
     <Folder Include="Context\" />
   </ItemGroup>
-=======
-	<ItemGroup>
-		<Folder Include="Context" />
-	</ItemGroup>
->>>>>>> origin/main
 
 	<ItemGroup>
 		<PackageReference Include="Azure.Storage.Blobs" Version="12.30.1" />

@@ -1,7 +1,6 @@
 ﻿using BLL.Interfaces;
 using DAL.Repository;
 using Domain.Models;
-using Domain.Models.DTO;
 using Org.BouncyCastle.Crypto.Generators;
 using System;
 using System.Collections.Generic;
@@ -11,6 +10,7 @@ using System.Text;
 using System.Threading.Tasks;
 using BCrypt.Net;
 using Microsoft.AspNetCore.Identity;
+using Domain.DTOs;
 namespace BLL.Services
 {
     public class AuthService(UserRepository userRepository, JwtService service, RefreshTokenRepository refreshTokenRepository, UserManager<User> userManager)
