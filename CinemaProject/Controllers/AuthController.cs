@@ -57,7 +57,7 @@ namespace CinemaProject.Controllers
         {
             var token = await authService.GenereateTokenAsync(model.Email);
             if (string.IsNullOrEmpty(token)) return BadRequest("Invalid email");
-            var msg = "Copy your token for resetting";
+            var msg = $"Copy your token for resetting {token}";
             await emailService.SendEmailAsync(model.Email, "Password reset", msg);
             return Ok("Check your email");
         }
@@ -66,7 +66,7 @@ namespace CinemaProject.Controllers
         {
             var res = await authService.ResetPasswordAsync(model.Email, model.Token, model.Password);
             if (!res.success) return BadRequest(res.error);
-            return RedirectToAction("Login");
+            return Ok("Password was changed");
         }
     }
 }

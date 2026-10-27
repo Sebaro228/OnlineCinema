@@ -19,7 +19,8 @@ namespace BLL.Services
         {
             var user = await userRepository.GetByNameAsync(login.UserName);
             if (user == null) return (false, "User not found", null);
-            if (!BCrypt.Net.BCrypt.Verify(login.Password, user.PasswordHash)) return (false, "Invalid password", null);
+            var isPasswordValid = await userManager.CheckPasswordAsync(user, login.Password);
+            if (!isPasswordValid) return (false, "Invalid password", null);
             var responce = await GetAuthResponceAsync(user);
             return (true, "Success", responce);
         }
@@ -56,8 +57,7 @@ namespace BLL.Services
                 UserName = register.UserName,
                 Email = register.Email,
                 Role = "User",
-                PasswordHash = BCrypt.Net.BCrypt.HashPassword(register.Password),
-                CreatedAt = DateTime.UtcNow,
+                CreatedAt = DateTime.UtcNow
             };
             var res = await userManager.CreateAsync(user, register.Password);
             if (!res.Succeeded)

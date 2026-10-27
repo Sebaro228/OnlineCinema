@@ -1,4 +1,3 @@
-
 using Azure.Identity;
 using Azure.Storage.Blobs;
 using BLL.Interfaces;
@@ -13,6 +12,7 @@ using Microsoft.AspNetCore.Identity;
 using Microsoft.AspNetCore.Mvc.ViewFeatures;
 using Microsoft.EntityFrameworkCore;
 using Microsoft.OpenApi.Models;
+using Resend;
 
 var builder = WebApplication.CreateBuilder(args);
 
@@ -74,6 +74,7 @@ builder.Services.AddDbContext<CinemaContext>(opts =>
     ));
 
 var key = builder.Configuration["Jwt:Key"];
+var emailKey = builder.Configuration["Resend:ApiKey"];
 
 builder.Services.AddIdentity<User, IdentityRole>(options =>
 {
@@ -86,6 +87,11 @@ builder.Services.AddAutoMapper(
     cfg => { },
     typeof(CinemaMapperProfile)
 );
+
+builder.Services.AddResend(options =>
+{
+    options.ApiToken = emailKey;
+});
 
 builder.Services.AddScoped<IService<Film>, FilmService>();
 builder.Services.AddScoped<IRepository<Film>, FilmRepository>();
