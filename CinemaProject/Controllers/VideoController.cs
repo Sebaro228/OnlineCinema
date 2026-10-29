@@ -1,4 +1,5 @@
-﻿using BLL.Services;
+﻿using BLL.Interfaces;
+using BLL.Services;
 using Domain.Models;
 using Microsoft.AspNetCore.Http;
 using Microsoft.AspNetCore.Mvc;
@@ -21,8 +22,8 @@ namespace CinemaProject.Controllers
             ["video/3gpp"] = [".3gp"]
         };
 
-        private readonly FilmService _service;
-        public VideoController(FilmService service)
+        private readonly IFilmService _service;
+        public VideoController(IFilmService service)
         {
             _service = service;
         }

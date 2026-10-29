@@ -17,7 +17,7 @@ namespace DAL.Interfaces
         public Task<Stream> GetPosterAsync(Film f);
         public Task<Stream> GetVideoAsync(Film f);
         public Task<Trailer?> GetTrailerDataAsync(int trailerId);
-        public Task<Stream> GetTrailerFileAsync(int trailerId);
+        public Task<Stream> GetTrailerFileAsync(Trailer t);
 
         public Task DeletePosterAsync(Film f);
         public Task DeleteVideoAsync(Film f);

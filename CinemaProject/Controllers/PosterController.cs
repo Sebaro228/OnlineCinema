@@ -1,4 +1,5 @@
 ﻿using AutoMapper;
+using BLL.Interfaces;
 using BLL.Services;
 using Domain.Models;
 using Microsoft.AspNetCore.Http;
@@ -17,9 +18,9 @@ namespace CinemaProject.Controllers
             ["image/webp"] = [".webp"]
         };
 
-        private readonly FilmService _service;
+        private readonly IFilmService _service;
 
-        public PosterController(FilmService service)
+        public PosterController(IFilmService service)
         {
             _service = service;
         }

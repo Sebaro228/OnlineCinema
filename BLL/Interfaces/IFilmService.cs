@@ -21,8 +21,9 @@ namespace BLL.Interfaces
 
         public Task DeletePosterAsync(Film f);
         public Task DeleteVideoAsync(Film f);
-        public Task DeleteTrailerDataAsync(Film f, int id);
-        public Task DeleteTrailerFileAsync(Film f, int id);
+        public Task DeleteTrailerDataAsync(int id);
+        public Task DeleteTrailerFileAsync(int id);
+        protected Task DeleteAllTrailersAsync(Film f);
 
         public Task UpdatePosterAsync(Film f, Stream s, string newExt, string newMime);
         public Task UpdateVideoAsync(Film f, Stream s, string newExt, string newMime);

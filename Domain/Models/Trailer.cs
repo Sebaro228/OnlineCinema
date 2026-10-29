@@ -16,6 +16,6 @@ namespace Domain.Models
         public DateOnly Date { get; set; }
         public int FilmId { get; set; }
         [JsonIgnore]
-        public Film? Film { get; set; }
+        public Film Film { get; set; }
     }
 }

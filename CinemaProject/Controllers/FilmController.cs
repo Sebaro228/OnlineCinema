@@ -13,10 +13,10 @@ namespace CinemaProject.Controllers
     [Route("api/[controller]")]
     public class FilmController : ControllerBase
     {
-        private readonly FilmService _service;
+        private readonly IFilmService _service;
         private readonly IMapper _mapper;
 
-        public FilmController(FilmService service, IMapper mapper)
+        public FilmController(IFilmService service, IMapper mapper)
         {
             _service = service;
             _mapper = mapper;

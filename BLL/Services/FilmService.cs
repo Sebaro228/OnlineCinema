@@ -1,4 +1,5 @@
-﻿using BLL.Interfaces;
+﻿using Azure.Storage.Blobs;
+using BLL.Interfaces;
 using DAL.Interfaces;
 using DAL.Repository;
 using Domain.Models;
@@ -13,11 +14,28 @@ namespace BLL.Services
 {
     public class FilmService : Service<Film>, IFilmService
     {
-        private readonly FilmRepository _repository;
+        private readonly IFilmRepository _repository;
 
-        public FilmService(FilmRepository repository) : base(repository)
+        public FilmService(IFilmRepository repository) : base(repository)
         {
             _repository = repository;
+        }
+
+        public override async Task DeleteAsync(int id)
+        {
+            Film? f = await _repository.GetAsync(id);
+            if (f is null)
+                return;
+
+            if (!string.IsNullOrEmpty(f.PosterExtension))
+                await DeletePosterAsync(f);
+            if (f.Trailers.Any())
+                await DeleteAllTrailersAsync(f);
+            if (!string.IsNullOrEmpty(f.VideoExtension))
+                await DeleteVideoAsync(f);
+
+            await _repository.DeleteAsync(f);
+            await _repository.SaveChangeAsync();
         }
 
         public async Task CratePosterAsync(Film f, Stream s)
@@ -50,24 +68,33 @@ namespace BLL.Services
             await _repository.SaveChangeAsync();
         }
 
-        public async Task DeleteTrailerDataAsync(Film f, int id)
+        public async Task DeleteTrailerDataAsync(int id)
         {
-            Trailer? t = f.Trailers.FirstOrDefault(t => t.Id == id);
+            Trailer? t = await _repository.GetTrailerDataAsync(id);
             if(t is null)
                 return;
-            await _repository.DeleteTrailerFileAsync(t);
             _repository.DeleteTrailerDataAsync(t);
             await _repository.SaveChangeAsync();
         }
 
-        public async Task DeleteTrailerFileAsync(Film f, int id)
+        public async Task DeleteTrailerFileAsync(int id)
         {
-            Trailer? t = f.Trailers.FirstOrDefault(t => t.Id == id);
+            Trailer? t = await _repository.GetTrailerDataAsync(id);
             if (t is null)
                 return;
             await _repository.DeleteTrailerFileAsync(t);
             t.Extension = string.Empty;
             t.Mime = string.Empty;
+            await _repository.SaveChangeAsync();
+        }
+
+        public async Task DeleteAllTrailersAsync(Film f)
+        {
+            foreach (Trailer t in f.Trailers)
+            {
+                await _repository.DeleteTrailerFileAsync(t);
+                _repository.DeleteTrailerDataAsync(t);
+            }
             await _repository.SaveChangeAsync();
         }
 
@@ -93,7 +120,10 @@ namespace BLL.Services
 
         public async Task<Stream> GetTrailerFileAsync(int id)
         {
-            return await _repository.GetTrailerFileAsync(id);
+            Trailer? t = await _repository.GetTrailerDataAsync(id);
+            if (t is null)
+                return Stream.Null;
+            return await _repository.GetTrailerFileAsync(t);
         }
 
         public async Task<Stream> GetVideoAsync(Film f)

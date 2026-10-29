@@ -1,4 +1,5 @@
 ﻿using AutoMapper;
+using BLL.Interfaces;
 using BLL.Services;
 using Domain.DTOs;
 using Domain.Models;
@@ -25,9 +26,9 @@ namespace CinemaProject.Controllers
 
 
 
-        private readonly FilmService _service;
+        private readonly IFilmService _service;
         private readonly IMapper _mapper;
-        public TrailerController(FilmService service, IMapper mapper)
+        public TrailerController(IFilmService service, IMapper mapper)
         {
             _service = service;
             _mapper = mapper;
@@ -47,12 +48,8 @@ namespace CinemaProject.Controllers
         }
 
         [HttpPost("CreateFile")]
-        public async Task<IActionResult> CreateTrailerFile(int filmId, int trailerId, IFormFile trailer)
+        public async Task<IActionResult> CreateTrailerFile(int trailerId, IFormFile trailer)
         {
-            Film? f = await _service.GetAsync(filmId);
-            if (f is null)
-                return NotFound("The film was not found");
-
             if (trailer is null)
                 return BadRequest("The trailer is null");
             if (trailer.Length <= 0)
@@ -71,7 +68,7 @@ namespace CinemaProject.Controllers
             if (!AllowedTrailerTypes[mime].Any(e => string.Equals(e, ext)))
                 return BadRequest("Mime does not match the specified extension of the file");
 
-            Trailer? t = f.Trailers.FirstOrDefault(t => t.Id == trailerId);
+            Trailer? t = await _service.GetTrailerDataAsync(trailerId);
             if (t is null)
                 return NotFound("The trailer was not found");
 
@@ -83,16 +80,14 @@ namespace CinemaProject.Controllers
         }
 
         [HttpDelete("Delete")]
-        public async Task<IActionResult> DeleteTrailerData(int filmId, int trailerId)
+        public async Task<IActionResult> DeleteTrailerData(int trailerId)
         {
-            Film? f = await _service.GetAsync(filmId);
-            if (f is null)
-                return NotFound("The film has not been found");
-
-            if (!f.Trailers.Any(t => t.Id == trailerId))
+            Trailer? t = await _service.GetTrailerDataAsync(trailerId);
+            if (t is null)
                 return NotFound("The trailer has not been found");
 
-            await _service.DeleteTrailerDataAsync(f, trailerId);
+            await _service.DeleteTrailerDataAsync(trailerId);
+            await _service.DeleteTrailerFileAsync(trailerId);
             return Ok();
         }
 
@@ -112,6 +107,8 @@ namespace CinemaProject.Controllers
             Trailer? t = await _service.GetTrailerDataAsync(trailerId);
             if (t is null)
                 return NotFound("The trailer has not been found");
+            if (string.IsNullOrEmpty(t.Extension))
+                return NotFound("This trailer has no file");
             return File(await _service.GetTrailerFileAsync(trailerId), t.Mime);
         }
 
@@ -145,13 +142,9 @@ namespace CinemaProject.Controllers
         }
 
         [HttpPut("UpdateFile")]
-        public async Task<IActionResult> UpdateTrailerFile(int filmId, int trailerId, IFormFile trailer)
+        public async Task<IActionResult> UpdateTrailerFile(int trailerId, IFormFile trailer)
         {
-            Film? f = await _service.GetAsync(filmId);
-            if (f is null)
-                return NotFound("A film has not been found");
-
-            Trailer? t = f.Trailers.FirstOrDefault(t => t.Id == trailerId);
+            Trailer? t = await _service.GetTrailerDataAsync(trailerId);
             if (t is null)
                 return NotFound("A trailer has not been found");
 

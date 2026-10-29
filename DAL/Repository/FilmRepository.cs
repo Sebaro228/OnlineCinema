@@ -33,18 +33,6 @@ namespace DAL.Repository
         public override async Task<IEnumerable<Film>> GetAllAsync()
             => await _dbSet.Include(f => f.Trailers).ToListAsync();
 
-        public override async Task DeleteAsync(Film item)
-        {
-            await base.DeleteAsync(item);
-
-            if(!string.IsNullOrEmpty(item.PosterExtension))
-                await DeletePosterAsync(item);
-            if(item.Trailers.Any())
-                await DeleteAllTrailersAsync(item);
-            if(!string.IsNullOrEmpty(item.VideoExtension))
-                await DeleteVideoAsync(item);
-        }
-
 
 
         private string GetPosterBlobPath(Film f)
@@ -80,9 +68,7 @@ namespace DAL.Repository
 
         public async Task SaveTrailerFileAsync(Trailer t, Stream s)
         {
-            Film? f = t.Film;
-            if (f is null)
-                throw new NullReferenceException("The film is null in film repository");
+            Film f = t.Film;
             BlobClient blobClient = _containerClient.GetBlobClient(GetTrailerBlobPath(f, t));
             await blobClient.UploadAsync(s, overwrite: true);
         }
@@ -104,13 +90,8 @@ namespace DAL.Repository
         public async Task<Trailer?> GetTrailerDataAsync(int trailerId)
             => _context.Trailers.Include(t => t.Film).FirstOrDefault(tr => tr.Id == trailerId);
 
-        public async Task<Stream> GetTrailerFileAsync(int trailerId)
+        public async Task<Stream> GetTrailerFileAsync(Trailer t)
         {
-            Trailer? t = _context.Trailers.Include(t => t.Film).FirstOrDefault(tr => tr.Id == trailerId);
-            if (t is null)
-                return Stream.Null;
-            if (t.Film is null)
-                throw new NullReferenceException("A film is null in the repository");
             BlobClient blobClient = _containerClient.GetBlobClient(GetTrailerBlobPath(t.Film, t));
             return await blobClient.OpenReadAsync();
         }
@@ -136,8 +117,6 @@ namespace DAL.Repository
 
         public async Task DeleteTrailerFileAsync(Trailer t)
         {
-            if (t.Film is null)
-                throw new NullReferenceException("The film is null in film repository");
             BlobClient blobClient = _containerClient.GetBlobClient(GetTrailerBlobPath(t.Film, t));
             await blobClient.DeleteIfExistsAsync();
         }
