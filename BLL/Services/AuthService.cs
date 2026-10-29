@@ -13,7 +13,7 @@ using Microsoft.AspNetCore.Identity;
 using Domain.DTOs;
 namespace BLL.Services
 {
-    public class AuthService(UserRepository userRepository, JwtService service, RefreshTokenRepository refreshTokenRepository, UserManager<User> userManager)
+    public class AuthService(UserRepository userRepository, JwtService service, RefreshTokenRepository refreshTokenRepository, UserManager<User> userManager, EmailService emailService)
     {
         public async Task<(bool success, string message, AuthResponse? response)> LoginAsync(LoginRequest login)
         {
@@ -65,8 +65,11 @@ namespace BLL.Services
                 var errors = res.Errors.Select(x => x.Description);
                 return (false, string.Join('\n', errors), null);
             }
+            var token = await GetConfirmTokenAsync(user.Id);
+            var msg = $"Copy your token for confirmation {token}";
+            await emailService.SendEmailAsync(register.Email, "Account confirmation", msg);
             var responce = await GetAuthResponceAsync(user);
-            return (true, "Success", responce);
+            return (true, "Check your email", responce);
         }
         async Task<AuthResponse> GetAuthResponceAsync(User user)
         {
@@ -106,6 +109,23 @@ namespace BLL.Services
             var user = await userManager.FindByEmailAsync(email);
             if (user == null) return (false, "User not found");
             var res = await userManager.ResetPasswordAsync(user, token, newPassword);
+            if (!res.Succeeded)
+            {
+                var error = res.Errors.Select(x => x.Description);
+                return (false, string.Join(", ", error));
+            }
+            return (true, null);
+        }
+        public async Task<string> GetConfirmTokenAsync(string id)
+        {
+            var user = await userManager.FindByIdAsync(id);
+            return await userManager.GenerateEmailConfirmationTokenAsync(user);
+        }
+        public async Task<(bool success, string error)> ConfirmEmailAsync(string email, string token)
+        {
+            var user = await userManager.FindByEmailAsync(email);
+            if (user == null) return (false, "User not found");
+            var res = await userManager.ConfirmEmailAsync(user, token);
             if (!res.Succeeded)
             {
                 var error = res.Errors.Select(x => x.Description);
