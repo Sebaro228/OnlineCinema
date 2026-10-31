@@ -56,11 +56,7 @@ namespace CinemaProject.Controllers
             if (!AllowedPosterTypes[mime].Any(e => string.Equals(e, ext)))
                 return BadRequest("Mime does not match the specified extension of the file");
 
-            f.PosterExtension = Path.GetExtension(poster.FileName);
-            f.PosterMime = mime;
-
-            await _service.UpdateAsync(f);
-            await _service.CratePosterAsync(f, poster.OpenReadStream());
+            await _service.UpdatePosterAsync(f, poster.OpenReadStream(), ext, mime);
             return Created();
         }
 

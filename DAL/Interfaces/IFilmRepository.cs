@@ -9,6 +9,8 @@ namespace DAL.Interfaces
 {
     public interface IFilmRepository : IRepository<Film>
     {
+        public Task UploadBlobAsync(string path, Stream stream);
+        public Task DeleteBlobAsync(string path);
         public Task SavePosterAsync(Film f, Stream s);
         public Task SaveVideoAsync(Film f, Stream s);
         public Task SaveTrailerDataAsync(Film f, Trailer t);

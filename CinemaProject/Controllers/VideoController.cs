@@ -57,11 +57,7 @@ namespace CinemaProject.Controllers
             if (!AllowedVideoTypes[mime].Any(e => string.Equals(e, ext)))
                 return BadRequest("Mime does not match the specified extension of the file");
 
-            f.VideoExtension = Path.GetExtension(video.FileName);
-            f.VideoMime = mime;
-
-            await _service.UpdateAsync(f);
-            await _service.CreateVideoAsync(f, video.OpenReadStream());
+            await _service.UpdateVideoAsync(f, video.OpenReadStream(), ext, mime);
             return Created();
         }
 

@@ -42,6 +42,10 @@ namespace DAL.Migrations
                         .IsRequired()
                         .HasColumnType("nvarchar(max)");
 
+                    b.Property<string>("PosterBlobPath")
+                        .IsRequired()
+                        .HasColumnType("nvarchar(max)");
+
                     b.Property<double>("Rating")
                         .HasColumnType("float");
 
@@ -54,6 +58,10 @@ namespace DAL.Migrations
                         .HasColumnType("nvarchar(max)");
 
                     b.Property<string>("VideoMime")
+                        .IsRequired()
+                        .HasColumnType("nvarchar(max)");
+
+                    b.Property<string>("VideoBlobPath")
                         .IsRequired()
                         .HasColumnType("nvarchar(max)");
 
@@ -116,6 +124,10 @@ namespace DAL.Migrations
                         .HasColumnType("int");
 
                     b.Property<string>("Mime")
+                        .IsRequired()
+                        .HasColumnType("nvarchar(max)");
+
+                    b.Property<string>("BlobPath")
                         .IsRequired()
                         .HasColumnType("nvarchar(max)");
 

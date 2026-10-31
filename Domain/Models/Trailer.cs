@@ -13,6 +13,7 @@ namespace Domain.Models
         public string Title { get; set; } = string.Empty;
         public string Extension { get; set; } = string.Empty;
         public string Mime { get; set; } = string.Empty;
+        public string BlobPath { get; set; } = string.Empty;
         public DateOnly Date { get; set; }
         public int FilmId { get; set; }
         [JsonIgnore]

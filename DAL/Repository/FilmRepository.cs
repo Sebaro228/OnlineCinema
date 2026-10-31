@@ -35,28 +35,28 @@ namespace DAL.Repository
 
 
 
-        private string GetPosterBlobPath(Film f)
-            => $"posters/{f.Id}{f.PosterExtension}";
+        public async Task UploadBlobAsync(string path, Stream stream)
+        {
+            var blob = _containerClient.GetBlobClient(path);
+            await blob.UploadAsync(stream, overwrite: false);
+        }
 
-        private string GetVideoBlobPath(Film f)
-            => $"videos/{f.Id}{f.VideoExtension}";
-
-        private string GetTrailerBlobPath(Film f, Trailer t)
-            => $"trailers/{f.Id}/{t.Id}{t.Extension}";
-
-
-
+        public async Task DeleteBlobAsync(string path)
+        {
+            if (!string.IsNullOrWhiteSpace(path))
+                await _containerClient.GetBlobClient(path).DeleteIfExistsAsync();
+        }
 
         public async Task SavePosterAsync(Film f, Stream s)
         {
-            BlobClient blobClient = _containerClient.GetBlobClient(GetPosterBlobPath(f));
-            await blobClient.UploadAsync(s, overwrite: true);
+            BlobClient blobClient = _containerClient.GetBlobClient(f.PosterBlobPath);
+            await blobClient.UploadAsync(s, overwrite: false);
         }
 
         public async Task SaveVideoAsync(Film f, Stream s)
         {
-            BlobClient blobClient = _containerClient.GetBlobClient(GetVideoBlobPath(f));
-            await blobClient.UploadAsync(s, overwrite: true);
+            BlobClient blobClient = _containerClient.GetBlobClient(f.VideoBlobPath);
+            await blobClient.UploadAsync(s, overwrite: false);
         }
 
         public async Task SaveTrailerDataAsync(Film f, Trailer t)
@@ -69,21 +69,21 @@ namespace DAL.Repository
         public async Task SaveTrailerFileAsync(Trailer t, Stream s)
         {
             Film f = t.Film;
-            BlobClient blobClient = _containerClient.GetBlobClient(GetTrailerBlobPath(f, t));
-            await blobClient.UploadAsync(s, overwrite: true);
+            BlobClient blobClient = _containerClient.GetBlobClient(t.BlobPath);
+            await blobClient.UploadAsync(s, overwrite: false);
         }
 
 
 
         public async Task<Stream> GetPosterAsync(Film f)
         {
-            BlobClient blobClient = _containerClient.GetBlobClient(GetPosterBlobPath(f));
+            BlobClient blobClient = _containerClient.GetBlobClient(f.PosterBlobPath);
             return await blobClient.OpenReadAsync();
         }
 
         public async Task<Stream> GetVideoAsync(Film f)
         {
-            BlobClient blobClient = _containerClient.GetBlobClient(GetVideoBlobPath(f));
+            BlobClient blobClient = _containerClient.GetBlobClient(f.VideoBlobPath);
             return await blobClient.OpenReadAsync();
         }
 
@@ -92,7 +92,7 @@ namespace DAL.Repository
 
         public async Task<Stream> GetTrailerFileAsync(Trailer t)
         {
-            BlobClient blobClient = _containerClient.GetBlobClient(GetTrailerBlobPath(t.Film, t));
+            BlobClient blobClient = _containerClient.GetBlobClient(t.BlobPath);
             return await blobClient.OpenReadAsync();
         }
 
@@ -100,13 +100,13 @@ namespace DAL.Repository
 
         public async Task DeletePosterAsync(Film f)
         {
-            BlobClient blobClient = _containerClient.GetBlobClient(GetPosterBlobPath(f));
+            BlobClient blobClient = _containerClient.GetBlobClient(f.PosterBlobPath);
             await blobClient.DeleteIfExistsAsync();
         }
 
         public async Task DeleteVideoAsync(Film f)
         {
-            BlobClient blobClient = _containerClient.GetBlobClient(GetVideoBlobPath(f));
+            BlobClient blobClient = _containerClient.GetBlobClient(f.VideoBlobPath);
             await blobClient.DeleteIfExistsAsync();
         }
 
@@ -117,7 +117,7 @@ namespace DAL.Repository
 
         public async Task DeleteTrailerFileAsync(Trailer t)
         {
-            BlobClient blobClient = _containerClient.GetBlobClient(GetTrailerBlobPath(t.Film, t));
+            BlobClient blobClient = _containerClient.GetBlobClient(t.BlobPath);
             await blobClient.DeleteIfExistsAsync();
         }
 
@@ -125,7 +125,7 @@ namespace DAL.Repository
         {
             foreach(Trailer t in f.Trailers)
             {
-                BlobClient blobClient = _containerClient.GetBlobClient(GetTrailerBlobPath(f, t));
+                BlobClient blobClient = _containerClient.GetBlobClient(t.BlobPath);
                 await blobClient.DeleteIfExistsAsync();
                 _context.Trailers.Remove(t);
             }

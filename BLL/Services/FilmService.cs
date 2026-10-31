@@ -38,26 +38,63 @@ namespace BLL.Services
             await _repository.SaveChangeAsync();
         }
 
-        public async Task CratePosterAsync(Film f, Stream s)
+        private async Task ReplaceFileAsync(string newPath, string? oldPath, Stream stream,
+            Action applyMetadata, Action restoreMetadata)
         {
-            await _repository.SavePosterAsync(f, s);
+            try
+            {
+                await _repository.UploadBlobAsync(newPath, stream);
+            }
+            catch
+            {
+                await TryDeleteNewBlobAsync(newPath);
+                throw;
+            }
+
+            try
+            {
+                applyMetadata();
+                await _repository.SaveChangeAsync();
+            }
+            catch
+            {
+                restoreMetadata();
+                await TryDeleteNewBlobAsync(newPath);
+                throw;
+            }
+
+            if (!string.IsNullOrWhiteSpace(oldPath))
+            {
+                try { await _repository.DeleteBlobAsync(oldPath); }
+                catch (Exception ex)
+                {
+                    Console.Error.WriteLine($"Old blob cleanup failed for '{oldPath}': {ex}");
+                }
+            }
         }
+
+        private async Task TryDeleteNewBlobAsync(string path)
+        {
+            try { await _repository.DeleteBlobAsync(path); }
+            catch (Exception ex)
+            {
+                Console.Error.WriteLine($"New blob cleanup failed for '{path}': {ex}");
+            }
+        }
+
+        public Task CratePosterAsync(Film f, Stream s)
+            => UpdatePosterAsync(f, s, f.PosterExtension, f.PosterMime);
 
         public async Task CreateTrailerDataAsync(Film f, Trailer t)
         {
             await _repository.SaveTrailerDataAsync(f, t);
         }
 
-        public async Task CreateTrailerFileAsync(Trailer t, Stream s)
-        {
-            await _repository.SaveTrailerFileAsync(t, s);
-        }
+        public Task CreateTrailerFileAsync(Trailer t, Stream s)
+            => UpdateTrailerFileAsync(t, s, t.Extension, t.Mime);
 
-        public async Task CreateVideoAsync(Film f, Stream s)
-        {
-            await _repository.SaveVideoAsync(f, s);
-        }
-
+        public Task CreateVideoAsync(Film f, Stream s)
+            => UpdateVideoAsync(f, s, f.VideoExtension, f.VideoMime);
 
 
         public async Task DeletePosterAsync(Film f)
@@ -65,6 +102,7 @@ namespace BLL.Services
             await _repository.DeletePosterAsync(f);
             f.PosterExtension = string.Empty;
             f.PosterMime = string.Empty;
+            f.PosterBlobPath = string.Empty;
             await _repository.SaveChangeAsync();
         }
 
@@ -85,6 +123,7 @@ namespace BLL.Services
             await _repository.DeleteTrailerFileAsync(t);
             t.Extension = string.Empty;
             t.Mime = string.Empty;
+            t.BlobPath = string.Empty;
             await _repository.SaveChangeAsync();
         }
 
@@ -102,7 +141,8 @@ namespace BLL.Services
         {
             await _repository.DeleteVideoAsync(f);
             f.VideoExtension = string.Empty;
-            f.PosterExtension = string.Empty;
+            f.VideoMime = string.Empty;
+            f.VideoBlobPath = string.Empty;
             await _repository.SaveChangeAsync();
         }
 
@@ -135,11 +175,12 @@ namespace BLL.Services
 
         public async Task UpdatePosterAsync(Film f, Stream s, string newExt, string newMime)
         {
-            await _repository.DeletePosterAsync(f);
-            f.PosterMime = newMime;
-            f.PosterExtension = newExt;
-            _repository.Update(f);
-            await _repository.SavePosterAsync(f, s);
+            string oldPath = f.PosterBlobPath;
+            string oldExt = f.PosterExtension, oldMime = f.PosterMime, oldStoredPath = f.PosterBlobPath;
+            string path = $"posters/{f.Id}/{Guid.NewGuid():N}{newExt}";
+            await ReplaceFileAsync(path, oldPath, s,
+                () => { f.PosterExtension = newExt; f.PosterMime = newMime; f.PosterBlobPath = path; },
+                () => { f.PosterExtension = oldExt; f.PosterMime = oldMime; f.PosterBlobPath = oldStoredPath; });
         }
 
         public async Task UpdateTrailerDataAsync(Trailer t)
@@ -150,20 +191,22 @@ namespace BLL.Services
 
         public async Task UpdateTrailerFileAsync(Trailer t, Stream s, string newExt, string newMime)
         {
-            await _repository.DeleteTrailerFileAsync(t);
-            t.Extension = newExt;
-            t.Mime = newMime;
-            _repository.UpdateTrailerData(t);
-            await _repository.SaveTrailerFileAsync(t, s);
+            string oldPath = t.BlobPath;
+            string oldExt = t.Extension, oldMime = t.Mime, oldStoredPath = t.BlobPath;
+            string path = $"trailers/{t.FilmId}/{t.Id}/{Guid.NewGuid():N}{newExt}";
+            await ReplaceFileAsync(path, oldPath, s,
+                () => { t.Extension = newExt; t.Mime = newMime; t.BlobPath = path; },
+                () => { t.Extension = oldExt; t.Mime = oldMime; t.BlobPath = oldStoredPath; });
         }
 
         public async Task UpdateVideoAsync(Film f, Stream s, string newExt, string newMime)
         {
-            await _repository.DeleteVideoAsync(f);
-            f.VideoMime = newMime;
-            f.VideoExtension = newExt;
-            _repository.Update(f);
-            await _repository.SaveVideoAsync(f, s);
+            string oldPath = f.VideoBlobPath;
+            string oldExt = f.VideoExtension, oldMime = f.VideoMime, oldStoredPath = f.VideoBlobPath;
+            string path = $"videos/{f.Id}/{Guid.NewGuid():N}{newExt}";
+            await ReplaceFileAsync(path, oldPath, s,
+                () => { f.VideoExtension = newExt; f.VideoMime = newMime; f.VideoBlobPath = path; },
+                () => { f.VideoExtension = oldExt; f.VideoMime = oldMime; f.VideoBlobPath = oldStoredPath; });
         }
     }
 }

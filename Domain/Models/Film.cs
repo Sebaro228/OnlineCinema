@@ -11,6 +11,8 @@
         public string VideoMime { get; set; } = string.Empty;
         public string PosterExtension { get; set; } = string.Empty;
         public string PosterMime { get; set; } = string.Empty;
+        public string PosterBlobPath { get; set; } = string.Empty;
+        public string VideoBlobPath { get; set; } = string.Empty;
         public List<Trailer> Trailers { get; set; } = new();
         //public List<CrewMember> Crew
     }

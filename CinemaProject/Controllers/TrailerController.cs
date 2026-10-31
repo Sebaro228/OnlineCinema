@@ -72,10 +72,7 @@ namespace CinemaProject.Controllers
             if (t is null)
                 return NotFound("The trailer was not found");
 
-            t.Mime = mime;
-            t.Extension = ext;
-            await _service.CreateTrailerFileAsync(t, trailer.OpenReadStream());
-            await _service.UpdateTrailerDataAsync(t);
+            await _service.UpdateTrailerFileAsync(t, trailer.OpenReadStream(), ext, mime);
             return Created();
         }
 
