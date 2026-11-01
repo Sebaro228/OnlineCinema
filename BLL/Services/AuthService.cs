@@ -1,6 +1,10 @@
-﻿using BLL.Interfaces;
+﻿using BCrypt.Net;
+using BLL.Interfaces;
 using DAL.Repository;
+using Domain.DTOs;
 using Domain.Models;
+using Domain.Roles;
+using Microsoft.AspNetCore.Identity;
 using Org.BouncyCastle.Crypto.Generators;
 using System;
 using System.Collections.Generic;
@@ -8,9 +12,6 @@ using System.Linq;
 using System.Runtime.ConstrainedExecution;
 using System.Text;
 using System.Threading.Tasks;
-using BCrypt.Net;
-using Microsoft.AspNetCore.Identity;
-using Domain.DTOs;
 namespace BLL.Services
 {
     public class AuthService(UserRepository userRepository, JwtService service, RefreshTokenRepository refreshTokenRepository, UserManager<User> userManager, EmailService emailService)
@@ -56,7 +57,6 @@ namespace BLL.Services
             {
                 UserName = register.UserName,
                 Email = register.Email,
-                Role = "User",
                 CreatedAt = DateTime.UtcNow
             };
             var res = await userManager.CreateAsync(user, register.Password);
@@ -69,6 +69,7 @@ namespace BLL.Services
             var msg = $"Copy your token for confirmation {token}";
             await emailService.SendEmailAsync(register.Email, "Account confirmation", msg);
             var responce = await GetAuthResponceAsync(user);
+            await userManager.AddToRoleAsync(user, Roles.User);
             return (true, "Check your email", responce);
         }
         async Task<AuthResponse> GetAuthResponceAsync(User user)
@@ -91,7 +92,6 @@ namespace BLL.Services
             {
                 UserName = user.UserName,
                 Email = user.Email,
-                Role = user.Role,
                 AccessToken = jwttoken,
                 RefreshToken = refreshToken,
                 Expiration = DateTime.UtcNow.AddMinutes(15)
