@@ -6,6 +6,7 @@ using CinemaProject.Mapper;
 using DAL.Context;
 using DAL.Interfaces;
 using DAL.Repository;
+using DAL.Seeder;
 using Domain.Models;
 using Microsoft.AspNetCore.Authentication.JwtBearer;
 using Microsoft.AspNetCore.Identity;
@@ -133,6 +134,13 @@ builder.Services.AddAuthentication(options =>
 builder.Services.AddAuthorization();
 
 var app = builder.Build();
+
+using (var scope = app.Services.CreateScope())
+{
+    var services = scope.ServiceProvider;
+    await DbSeeder.SeedRolesAsync(services);
+    await DbSeeder.SeedAdminUserAsync(services);
+}
 
 // Configure the HTTP request pipeline.
 if (app.Environment.IsDevelopment())

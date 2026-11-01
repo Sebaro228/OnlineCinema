@@ -8,7 +8,7 @@ namespace Domain.DTOs
 {
     public class TrailerDto
     {
-        public int FilmId { get; set; }
+        public string FilmId { get; set; }
         public string Title { get; set; } = string.Empty;
         public DateOnly Date { get; set; }
     }

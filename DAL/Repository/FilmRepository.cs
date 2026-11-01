@@ -25,7 +25,7 @@ namespace DAL.Repository
 
 
 
-        public override async Task<Film?> GetAsync(int id)
+        public override async Task<Film?> GetAsync(string id)
             => await _context.Films
                 .Include(f => f.Trailers)
                 .FirstOrDefaultAsync(f => f.Id == id);

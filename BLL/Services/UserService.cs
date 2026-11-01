@@ -1,5 +1,6 @@
 ﻿using DAL.Interfaces;
 using Domain.Models;
+using Microsoft.AspNetCore.Identity;
 using System;
 using System.Collections.Generic;
 using System.Linq;
@@ -10,6 +11,21 @@ namespace BLL.Services
 {
     public class UserService : Service<User>
     {
-        public UserService(IRepository<User> rep) : base(rep) { }
+        static UserManager<User> _userManager;
+        static RoleManager<IdentityRole> _roleManager;
+        public UserService(IRepository<User> rep, UserManager<User> userManager, RoleManager<IdentityRole> roleManager) : base(rep)
+        {
+            _userManager = userManager;
+            _roleManager = roleManager;
+        }
+
+        public async Task ChangeRole(string id, string role)
+        {
+            var user = await _userManager.FindByIdAsync(id);
+            if (user == null) return;
+            var roles = await _userManager.GetRolesAsync(user);
+            await _userManager.RemoveFromRolesAsync(user, roles);
+            if (await _roleManager.RoleExistsAsync(role)) await _userManager.AddToRoleAsync(user, role);
+        }
     }
 }

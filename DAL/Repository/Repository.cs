@@ -36,7 +36,7 @@ namespace DAL.Repository
         public virtual async Task<IEnumerable<T>> GetAllAsync()
             => await _dbSet.ToListAsync();
 
-        public virtual async Task<T?> GetAsync(int id)
+        public virtual async Task<T?> GetAsync(string id)
             => await _dbSet.FindAsync(id);
 
         public virtual async Task SaveChangeAsync()

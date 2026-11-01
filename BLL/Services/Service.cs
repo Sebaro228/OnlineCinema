@@ -17,7 +17,7 @@ namespace BLL.Services
             await repository.SaveChangeAsync();
         }
 
-        public virtual async Task DeleteAsync(int id)
+        public virtual async Task DeleteAsync(string id)
         {
             T? i = await repository.GetAsync(id);
             if (i is null)
@@ -32,7 +32,7 @@ namespace BLL.Services
         public virtual async Task<IEnumerable<T>> GetAllAsync()
             => await repository.GetAllAsync();
 
-        public virtual async Task<T?> GetAsync(int id)
+        public virtual async Task<T?> GetAsync(string id)
             => await repository.GetAsync(id);
 
 

@@ -2,6 +2,7 @@
 using BLL.Interfaces;
 using BLL.Services;
 using Domain.Models;
+using Microsoft.AspNetCore.Authorization;
 using Microsoft.AspNetCore.Http;
 using Microsoft.AspNetCore.Mvc;
 
@@ -26,9 +27,9 @@ namespace CinemaProject.Controllers
         }
 
 
-
         [HttpPost("Create")]
-        public async Task<IActionResult> CreatePoster(int id, IFormFile poster)
+        [Authorize(Roles = "ContentManager")]
+        public async Task<IActionResult> CreatePoster(string id, IFormFile poster)
         {
             Film? f = await _service.GetAsync(id);
             if (f is null)
@@ -65,7 +66,8 @@ namespace CinemaProject.Controllers
         }
 
         [HttpDelete("Delete")]
-        public async Task<IActionResult> DeletePoster(int id)
+        [Authorize(Roles = "ContentManager")]
+        public async Task<IActionResult> DeletePoster(string id)
         {
             Film? f = await _service.GetAsync(id);
             if (f is null)
@@ -78,7 +80,7 @@ namespace CinemaProject.Controllers
         }
 
         [HttpGet("Get")]
-        public async Task<IActionResult> GetPoster(int id)
+        public async Task<IActionResult> GetPoster(string id)
         {
             Film? f = await _service.GetAsync(id);
             if (f is null)
@@ -91,7 +93,8 @@ namespace CinemaProject.Controllers
         }
 
         [HttpPut("Update")]
-        public async Task<IActionResult> UpdatePoster(int id, IFormFile poster)
+        [Authorize(Roles = "ContentManager")]
+        public async Task<IActionResult> UpdatePoster(string id, IFormFile poster)
         {
             Film? f = await _service.GetAsync(id);
             if (f is null)

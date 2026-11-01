@@ -21,7 +21,7 @@ namespace BLL.Services
             _repository = repository;
         }
 
-        public override async Task DeleteAsync(int id)
+        public override async Task DeleteAsync(string id)
         {
             Film? f = await _repository.GetAsync(id);
             if (f is null)
