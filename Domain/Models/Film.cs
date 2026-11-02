@@ -2,7 +2,7 @@
 {
     public class Film
     {
-        public string Id { get; set; }
+        public string Id { get; set; } = Guid.NewGuid().ToString();
         public string Title { get; set; } = string.Empty;
         public string Description { get; set; } = string.Empty;
         public int Year { get; set; }

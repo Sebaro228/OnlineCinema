@@ -30,7 +30,7 @@ namespace CinemaProject.Controllers
             {
                 return BadRequest(res.message);
             }
-            return Ok(res.response);
+            return Ok(res.message);
         }
         [HttpPost("logout")]
         public async Task<IActionResult> Logout([FromBody] RefreshTokenRequest refreshTokenRequest)

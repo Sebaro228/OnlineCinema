@@ -50,25 +50,24 @@ namespace BLL.Services
             var response = await GetAuthResponceAsync(refreshTokenEntity.User);
             return (true, "Token refreshed successfully", response);
         }
-        public async Task<(bool success, string message, AuthResponse? response)> RegisterAsync(RegisterRequest register)
+        public async Task<(bool success, string message)> RegisterAsync(RegisterRequest register)
         {
             var user = await userManager.FindByNameAsync(register.UserName);
-            if (user != null) return (false, "User is already exist", null);
+            if (user != null) return (false, "User is already exist");
             user = await userManager.FindByEmailAsync(register.Email);
-            if (user != null) return (false, "User is already exist", null);
+            if (user != null) return (false, "User is already exist");
             user = mapper.Map<User>(register);
             var res = await userManager.CreateAsync(user, register.Password);
             if (!res.Succeeded)
             {
                 var errors = res.Errors.Select(x => x.Description);
-                return (false, string.Join('\n', errors), null);
+                return (false, string.Join('\n', errors));
             }
             var token = await GetConfirmTokenAsync(user.Id);
             var msg = $"Copy your token for confirmation {token}";
             await emailService.SendEmailAsync(register.Email, "Account confirmation", msg);
-            var responce = await GetAuthResponceAsync(user);
             await userManager.AddToRoleAsync(user, Roles.User);
-            return (true, "Check your email", responce);
+            return (true, "Check your email");
         }
         async Task<AuthResponse> GetAuthResponceAsync(User user)
         {
