@@ -1,4 +1,5 @@
 ﻿using BLL.Services;
+using Domain.Roles;
 using Microsoft.AspNetCore.Authorization;
 using Microsoft.AspNetCore.Http;
 using Microsoft.AspNetCore.Mvc;
@@ -7,14 +8,14 @@ namespace CinemaProject.Controllers
 {
     [Route("api/[controller]")]
     [ApiController]
-    [Authorize(Roles = "Admin")]
+    [Authorize(Roles = Roles.Admin)]
     public class UserController(UserService service) : ControllerBase
     {
         [HttpPost("ChangeRole")]
         public async Task<IActionResult> ChangeRole(string id, string role)
         {
             await service.ChangeRole(id, role);
-            return Ok();
+            return Ok(); 
         }
 
         [HttpGet("GetAll")]

@@ -1,4 +1,5 @@
 ﻿using Domain.Models;
+using Microsoft.AspNetCore.Identity;
 using Microsoft.Extensions.Configuration;
 using Microsoft.IdentityModel.Tokens;
 using System;
@@ -12,13 +13,13 @@ using System.Threading.Tasks;
 
 namespace BLL.Services
 {
-    public class JwtService(IConfiguration configuration)
+    public class JwtService(IConfiguration configuration, UserManager<User> userManager)
     {
-        public string GetJwt(User user)
+        public async Task<string> GetJwt(User user)
         {
             var key = configuration["Jwt:Key"];
             var issuer = configuration["Jwt:Issuer "];
-            var ausience = configuration["Jwt:Audience"];
+            var audience = configuration["Jwt:Audience"];
             var exp = int.Parse(configuration["Jwt:ExpireMinutes"]);
             var securityKey = new SymmetricSecurityKey(Encoding.UTF8.GetBytes(key));
             var credentials = new SigningCredentials(securityKey, SecurityAlgorithms.HmacSha256);
@@ -27,11 +28,12 @@ namespace BLL.Services
                 new Claim(ClaimTypes.NameIdentifier, user.Id),
                 new Claim(ClaimTypes.Name, user.UserName),
                 new Claim(ClaimTypes.Email, user.Email),
+                new Claim(ClaimTypes.Role, (await userManager.GetRolesAsync(user)).First()),
                 new Claim(JwtRegisteredClaimNames.Jti, Guid.NewGuid().ToString())
             };
             var token = new JwtSecurityToken(
                 issuer: issuer,
-                audience: ausience,
+                audience: audience,
                 claims: claims,
                 expires: DateTime.UtcNow.AddMinutes(15),
                 signingCredentials: credentials

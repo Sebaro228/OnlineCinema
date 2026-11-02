@@ -72,7 +72,7 @@ namespace BLL.Services
         }
         async Task<AuthResponse> GetAuthResponceAsync(User user)
         {
-            var jwttoken = service.GetJwt(user);
+            var jwttoken = await service.GetJwt(user);
             var refreshToken = service.GetRefresh(user);
 
             var refreshTokenEntity = new RefreshToken
@@ -92,7 +92,8 @@ namespace BLL.Services
                 Email = user.Email,
                 AccessToken = jwttoken,
                 RefreshToken = refreshToken,
-                Expiration = DateTime.UtcNow.AddMinutes(15)
+                Expiration = DateTime.UtcNow.AddMinutes(15),
+                Role = (await userManager.GetRolesAsync(user)).First()
             };
         }
         public async Task<string?> GenereateTokenAsync(string email)
