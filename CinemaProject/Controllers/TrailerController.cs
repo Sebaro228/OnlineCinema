@@ -3,6 +3,7 @@ using BLL.Interfaces;
 using BLL.Services;
 using Domain.DTOs;
 using Domain.Models;
+using Microsoft.AspNetCore.Authorization;
 using Microsoft.AspNetCore.Http;
 using Microsoft.AspNetCore.Mvc;
 
@@ -10,6 +11,7 @@ namespace CinemaProject.Controllers
 {
     [Route("api/[controller]")]
     [ApiController]
+    [Authorize]
     public class TrailerController : ControllerBase
     {
         private static readonly Dictionary<string, string[]> AllowedTrailerTypes = new()
@@ -35,6 +37,7 @@ namespace CinemaProject.Controllers
         }
 
         [HttpPost("Create")]
+        [Authorize(Roles = "ContentManager")]
         public async Task<IActionResult> CreateTrailer(TrailerDto dto)
         {
             Film? f = await _service.GetAsync(dto.FilmId);
@@ -48,6 +51,7 @@ namespace CinemaProject.Controllers
         }
 
         [HttpPost("CreateFile")]
+        [Authorize(Roles = "ContentManager")]
         public async Task<IActionResult> CreateTrailerFile(int trailerId, IFormFile trailer)
         {
             if (trailer is null)
@@ -77,6 +81,7 @@ namespace CinemaProject.Controllers
         }
 
         [HttpDelete("Delete")]
+        [Authorize(Roles = "ContentManager")]
         public async Task<IActionResult> DeleteTrailerData(int trailerId)
         {
             Trailer? t = await _service.GetTrailerDataAsync(trailerId);
@@ -110,7 +115,7 @@ namespace CinemaProject.Controllers
         }
 
         [HttpGet("GetAllTrailersData")]
-        public async Task<IActionResult> GetAllTrailersData(int filmId)
+        public async Task<IActionResult> GetAllTrailersData(string filmId)
         {
             Film? f = await _service.GetAsync(filmId);
             if (f is null)
@@ -120,6 +125,7 @@ namespace CinemaProject.Controllers
         }
 
         [HttpPut("UpdateData")]
+        [Authorize(Roles = "ContentManager")]
         public async Task<IActionResult> UpdateTrailerData(int id, TrailerDto dto)
         {
             Trailer? t = await _service.GetTrailerDataAsync(id);
@@ -139,6 +145,7 @@ namespace CinemaProject.Controllers
         }
 
         [HttpPut("UpdateFile")]
+        [Authorize(Roles = "ContentManager")]
         public async Task<IActionResult> UpdateTrailerFile(int trailerId, IFormFile trailer)
         {
             Trailer? t = await _service.GetTrailerDataAsync(trailerId);

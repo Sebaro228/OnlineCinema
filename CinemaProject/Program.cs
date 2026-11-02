@@ -6,6 +6,7 @@ using CinemaProject.Mapper;
 using DAL.Context;
 using DAL.Interfaces;
 using DAL.Repository;
+using DAL.Seeder;
 using Domain.Models;
 using Microsoft.AspNetCore.Authentication.JwtBearer;
 using Microsoft.AspNetCore.Identity;
@@ -13,6 +14,7 @@ using Microsoft.AspNetCore.Mvc.ViewFeatures;
 using Microsoft.EntityFrameworkCore;
 using Microsoft.OpenApi.Models;
 using Resend;
+using System.Security.Claims;
 
 var builder = WebApplication.CreateBuilder(args);
 
@@ -96,16 +98,16 @@ builder.Services.AddResend(options =>
 builder.Services.AddScoped<IService<Film>, FilmService>();
 builder.Services.AddScoped<IRepository<Film>, FilmRepository>();
 builder.Services.AddScoped<IService<User>, UserService>();
-builder.Services.AddScoped<IRepository<User>, UserRepository>();
 builder.Services.AddScoped<IRepository<RefreshToken>, RefreshTokenRepository>();
+builder.Services.AddScoped<IRepository<User>, UserRepository>();
 
 builder.Services.AddScoped<IFilmService, FilmService>();
 builder.Services.AddScoped<IFilmRepository, FilmRepository>();
 builder.Services.AddScoped<UserService>();
-builder.Services.AddScoped<UserRepository>();
 builder.Services.AddScoped<RefreshTokenRepository>();
 builder.Services.AddScoped<AuthService>();
 builder.Services.AddScoped<JwtService>();
+builder.Services.AddScoped<UserRepository>();
 builder.Services.AddTransient<EmailService>();
 
 builder.Services.AddAuthentication(options =>
@@ -126,7 +128,8 @@ builder.Services.AddAuthentication(options =>
         IssuerSigningKey = new Microsoft.IdentityModel.Tokens.SymmetricSecurityKey(
             System.Text.Encoding.UTF8.GetBytes(key)
         ),
-        ClockSkew = TimeSpan.Zero
+        ClockSkew = TimeSpan.Zero,
+        RoleClaimType = ClaimTypes.Role
     };
 });
 
@@ -147,6 +150,13 @@ builder.Services.AddAuthorization();
 
 var app = builder.Build();
 
+using (var scope = app.Services.CreateScope())
+{
+    var services = scope.ServiceProvider;
+    await DbSeeder.SeedRolesAsync(services);
+    await DbSeeder.SeedAdminUserAsync(services);
+}
+
 // Configure the HTTP request pipeline.
 if (app.Environment.IsDevelopment())
 {
@@ -158,6 +168,7 @@ app.UseHttpsRedirection();
 
 app.UseCors("Frontend");
 
+app.UseAuthentication();
 app.UseAuthorization();
 
 app.MapControllers();

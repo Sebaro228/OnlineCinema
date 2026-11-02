@@ -1,6 +1,12 @@
-﻿using BLL.Interfaces;
+﻿using AutoMapper;
+using AutoMapper.Execution;
+using BCrypt.Net;
+using BLL.Interfaces;
 using DAL.Repository;
+using Domain.DTOs;
 using Domain.Models;
+using Domain.Roles;
+using Microsoft.AspNetCore.Identity;
 using Org.BouncyCastle.Crypto.Generators;
 using System;
 using System.Collections.Generic;
@@ -8,19 +14,16 @@ using System.Linq;
 using System.Runtime.ConstrainedExecution;
 using System.Text;
 using System.Threading.Tasks;
-using BCrypt.Net;
-using Microsoft.AspNetCore.Identity;
-using Domain.DTOs;
 namespace BLL.Services
 {
-    public class AuthService(UserRepository userRepository, JwtService service, RefreshTokenRepository refreshTokenRepository, UserManager<User> userManager)
+    public class AuthService(JwtService service, RefreshTokenRepository refreshTokenRepository, UserManager<User> userManager, SignInManager<User> signInManager, EmailService emailService, IMapper mapper)
     {
         public async Task<(bool success, string message, AuthResponse? response)> LoginAsync(LoginRequest login)
         {
-            var user = await userRepository.GetByNameAsync(login.UserName);
+            var user = await userManager.FindByNameAsync(login.UserName);
             if (user == null) return (false, "User not found", null);
-            var isPasswordValid = await userManager.CheckPasswordAsync(user, login.Password);
-            if (!isPasswordValid) return (false, "Invalid password", null);
+            var res = await signInManager.PasswordSignInAsync(user, login.Password, true, false);
+            if (!res.Succeeded) return (false, "Invalid password", null);
             var responce = await GetAuthResponceAsync(user);
             return (true, "Success", responce);
         }
@@ -31,6 +34,7 @@ namespace BLL.Services
             if (tokenEntity.isRevoked && !tokenEntity.IsActive) return (false, "Refresh token already revoked");
             await refreshTokenRepository.RevokeAllAsync(tokenEntity.UserId);
             await refreshTokenRepository.SaveChangeAsync();
+            await signInManager.SignOutAsync();
             return (true, "Success");
         }
         public async Task<(bool success, string message, AuthResponse? response)> RefreshTokenAsync(string token)
@@ -46,31 +50,28 @@ namespace BLL.Services
             var response = await GetAuthResponceAsync(refreshTokenEntity.User);
             return (true, "Token refreshed successfully", response);
         }
-        public async Task<(bool success, string message, AuthResponse? response)> RegisterAsync(RegisterRequest register)
+        public async Task<(bool success, string message)> RegisterAsync(RegisterRequest register)
         {
-            var user = await userRepository.GetByNameAsync(register.UserName);
-            if (user != null) return (false, "User is already exist", null);
-            user = await userRepository.GetByEmailAsync(register.Email);
-            if (user != null) return (false, "User is already exist", null);
-            user = new User
-            {
-                UserName = register.UserName,
-                Email = register.Email,
-                Role = "User",
-                CreatedAt = DateTime.UtcNow
-            };
+            var user = await userManager.FindByNameAsync(register.UserName);
+            if (user != null) return (false, "User is already exist");
+            user = await userManager.FindByEmailAsync(register.Email);
+            if (user != null) return (false, "User is already exist");
+            user = mapper.Map<User>(register);
             var res = await userManager.CreateAsync(user, register.Password);
             if (!res.Succeeded)
             {
                 var errors = res.Errors.Select(x => x.Description);
-                return (false, string.Join('\n', errors), null);
+                return (false, string.Join('\n', errors));
             }
-            var responce = await GetAuthResponceAsync(user);
-            return (true, "Success", responce);
+            var token = await GetConfirmTokenAsync(user.Id);
+            var msg = $"Copy your token for confirmation {token}";
+            await emailService.SendEmailAsync(register.Email, "Account confirmation", msg);
+            await userManager.AddToRoleAsync(user, Roles.User);
+            return (true, "Check your email");
         }
         async Task<AuthResponse> GetAuthResponceAsync(User user)
         {
-            var jwttoken = service.GetJwt(user);
+            var jwttoken = await service.GetJwt(user);
             var refreshToken = service.GetRefresh(user);
 
             var refreshTokenEntity = new RefreshToken
@@ -88,10 +89,10 @@ namespace BLL.Services
             {
                 UserName = user.UserName,
                 Email = user.Email,
-                Role = user.Role,
                 AccessToken = jwttoken,
                 RefreshToken = refreshToken,
-                Expiration = DateTime.UtcNow.AddMinutes(15)
+                Expiration = DateTime.UtcNow.AddMinutes(15),
+                Role = (await userManager.GetRolesAsync(user)).First()
             };
         }
         public async Task<string?> GenereateTokenAsync(string email)
@@ -106,6 +107,23 @@ namespace BLL.Services
             var user = await userManager.FindByEmailAsync(email);
             if (user == null) return (false, "User not found");
             var res = await userManager.ResetPasswordAsync(user, token, newPassword);
+            if (!res.Succeeded)
+            {
+                var error = res.Errors.Select(x => x.Description);
+                return (false, string.Join(", ", error));
+            }
+            return (true, null);
+        }
+        public async Task<string> GetConfirmTokenAsync(string id)
+        {
+            var user = await userManager.FindByIdAsync(id);
+            return await userManager.GenerateEmailConfirmationTokenAsync(user);
+        }
+        public async Task<(bool success, string error)> ConfirmEmailAsync(string email, string token)
+        {
+            var user = await userManager.FindByEmailAsync(email);
+            if (user == null) return (false, "User not found");
+            var res = await userManager.ConfirmEmailAsync(user, token);
             if (!res.Succeeded)
             {
                 var error = res.Errors.Select(x => x.Description);

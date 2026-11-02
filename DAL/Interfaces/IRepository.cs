@@ -12,7 +12,7 @@ namespace DAL.Interfaces
         Task CreateAsync(T item);
         void Update(T item);
         Task DeleteAsync(T item);
-        Task<T?> GetAsync(int id);
+        Task<T?> GetAsync(string id);
         Task<IEnumerable<T>> GetAllAsync();
         Task<T?> FirstOrDefaultAsync(Expression<Func<T, bool>> pred);
         Task<bool> AnyAsync(Expression<Func<T, bool>> pred);

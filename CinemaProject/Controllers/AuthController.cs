@@ -1,6 +1,7 @@
 ﻿using BLL.Interfaces;
 using BLL.Services;
 using Domain.DTOs;
+using Domain.Models;
 using Microsoft.AspNetCore.Http;
 using Microsoft.AspNetCore.Mvc;
 
@@ -29,7 +30,7 @@ namespace CinemaProject.Controllers
             {
                 return BadRequest(res.message);
             }
-            return Ok(res.response);
+            return Ok(res.message);
         }
         [HttpPost("logout")]
         public async Task<IActionResult> Logout([FromBody] RefreshTokenRequest refreshTokenRequest)
@@ -67,6 +68,13 @@ namespace CinemaProject.Controllers
             var res = await authService.ResetPasswordAsync(model.Email, model.Token, model.Password);
             if (!res.success) return BadRequest(res.error);
             return Ok("Password was changed");
+        }
+        [HttpPost("ConfirmEmail")]
+        public async Task<IActionResult> ConfirmEmail(string email, string token)
+        {
+            var res = await authService.ConfirmEmailAsync(email, token);
+            if (!res.success) return BadRequest(res.error);
+            return Ok("Account confirmed");
         }
     }
 }

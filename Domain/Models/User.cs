@@ -8,7 +8,6 @@ namespace Domain.Models
 {
     public class User : IdentityUser
     {
-        public string Role { get; set; }
         public DateTime CreatedAt { get; set; } = DateTime.UtcNow;
     }
 }

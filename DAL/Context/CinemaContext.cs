@@ -1,5 +1,6 @@
 ﻿using Azure.Core;
 using Domain.Models;
+using Microsoft.AspNetCore.Identity.EntityFrameworkCore;
 using Microsoft.EntityFrameworkCore;
 using System;
 using System.Collections.Generic;
@@ -9,22 +10,23 @@ using System.Threading.Tasks;
 
 namespace DAL.Context
 {
-        public class CinemaContext(DbContextOptions<CinemaContext> opts) : DbContext(opts)
+        public class CinemaContext : IdentityDbContext<User>
         {
+            public CinemaContext(DbContextOptions<CinemaContext> options) : base(options) { }
             public DbSet<Film> Films { get; set; }
             public DbSet<Trailer> Trailers { get; set; }
             public DbSet<User> Users { get; set; }
             public DbSet<RefreshToken> RefreshTokens { get; set; }
 
-        protected override void OnModelCreating(ModelBuilder modelBuilder)
-            {
-                base.OnModelCreating(modelBuilder);
+            protected override void OnModelCreating(ModelBuilder modelBuilder)
+                {
+                    base.OnModelCreating(modelBuilder);
 
-                modelBuilder.Entity<Film>()
-                    .HasMany(f => f.Trailers)
-                    .WithOne(t => t.Film)
-                    .HasForeignKey(t => t.FilmId)
-                    .OnDelete(DeleteBehavior.Cascade);
-            }
+                    modelBuilder.Entity<Film>()
+                        .HasMany(f => f.Trailers)
+                        .WithOne(t => t.Film)
+                        .HasForeignKey(t => t.FilmId)
+                        .OnDelete(DeleteBehavior.Cascade);
+                }
         }
 }
