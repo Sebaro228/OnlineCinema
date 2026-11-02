@@ -1,4 +1,6 @@
-﻿using BCrypt.Net;
+﻿using AutoMapper;
+using AutoMapper.Execution;
+using BCrypt.Net;
 using BLL.Interfaces;
 using DAL.Repository;
 using Domain.DTOs;
@@ -14,14 +16,14 @@ using System.Text;
 using System.Threading.Tasks;
 namespace BLL.Services
 {
-    public class AuthService(UserRepository userRepository, JwtService service, RefreshTokenRepository refreshTokenRepository, UserManager<User> userManager, EmailService emailService)
+    public class AuthService(JwtService service, RefreshTokenRepository refreshTokenRepository, UserManager<User> userManager, SignInManager<User> signInManager, EmailService emailService, IMapper mapper)
     {
         public async Task<(bool success, string message, AuthResponse? response)> LoginAsync(LoginRequest login)
         {
-            var user = await userRepository.GetByNameAsync(login.UserName);
+            var user = await userManager.FindByNameAsync(login.UserName);
             if (user == null) return (false, "User not found", null);
-            var isPasswordValid = await userManager.CheckPasswordAsync(user, login.Password);
-            if (!isPasswordValid) return (false, "Invalid password", null);
+            var res = await signInManager.PasswordSignInAsync(user, login.Password, true, false);
+            if (!res.Succeeded) return (false, "Invalid password", null);
             var responce = await GetAuthResponceAsync(user);
             return (true, "Success", responce);
         }
@@ -32,6 +34,7 @@ namespace BLL.Services
             if (tokenEntity.isRevoked && !tokenEntity.IsActive) return (false, "Refresh token already revoked");
             await refreshTokenRepository.RevokeAllAsync(tokenEntity.UserId);
             await refreshTokenRepository.SaveChangeAsync();
+            await signInManager.SignOutAsync();
             return (true, "Success");
         }
         public async Task<(bool success, string message, AuthResponse? response)> RefreshTokenAsync(string token)
@@ -49,16 +52,11 @@ namespace BLL.Services
         }
         public async Task<(bool success, string message, AuthResponse? response)> RegisterAsync(RegisterRequest register)
         {
-            var user = await userRepository.GetByNameAsync(register.UserName);
+            var user = await userManager.FindByNameAsync(register.UserName);
             if (user != null) return (false, "User is already exist", null);
-            user = await userRepository.GetByEmailAsync(register.Email);
+            user = await userManager.FindByEmailAsync(register.Email);
             if (user != null) return (false, "User is already exist", null);
-            user = new User
-            {
-                UserName = register.UserName,
-                Email = register.Email,
-                CreatedAt = DateTime.UtcNow
-            };
+            user = mapper.Map<User>(register);
             var res = await userManager.CreateAsync(user, register.Password);
             if (!res.Succeeded)
             {

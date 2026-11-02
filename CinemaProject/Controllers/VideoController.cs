@@ -9,6 +9,7 @@ namespace CinemaProject.Controllers
 {
     [Route("api/[controller]")]
     [ApiController]
+    [Authorize]
     public class VideoController : ControllerBase
     {
         private static readonly Dictionary<string, string[]> AllowedVideoTypes = new()

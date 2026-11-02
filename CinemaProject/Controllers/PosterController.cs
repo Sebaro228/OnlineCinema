@@ -10,6 +10,7 @@ namespace CinemaProject.Controllers
 {
     [Route("api/[controller]")]
     [ApiController]
+    [Authorize]
     public class PosterController : ControllerBase
     {
         private static readonly Dictionary<string, string[]> AllowedPosterTypes = new()

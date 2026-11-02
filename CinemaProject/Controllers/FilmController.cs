@@ -11,6 +11,7 @@ namespace CinemaProject.Controllers
 {
     [ApiController]
     [Route("api/[controller]")]
+    [Authorize]
     public class FilmController : ControllerBase
     {
         private readonly IFilmService _service;

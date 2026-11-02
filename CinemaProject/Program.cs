@@ -97,16 +97,16 @@ builder.Services.AddResend(options =>
 builder.Services.AddScoped<IService<Film>, FilmService>();
 builder.Services.AddScoped<IRepository<Film>, FilmRepository>();
 builder.Services.AddScoped<IService<User>, UserService>();
-builder.Services.AddScoped<IRepository<User>, UserRepository>();
 builder.Services.AddScoped<IRepository<RefreshToken>, RefreshTokenRepository>();
+builder.Services.AddScoped<IRepository<User>, UserRepository>();
 
 builder.Services.AddScoped<IFilmService, FilmService>();
 builder.Services.AddScoped<IFilmRepository, FilmRepository>();
 builder.Services.AddScoped<UserService>();
-builder.Services.AddScoped<UserRepository>();
 builder.Services.AddScoped<RefreshTokenRepository>();
 builder.Services.AddScoped<AuthService>();
 builder.Services.AddScoped<JwtService>();
+builder.Services.AddScoped<UserRepository>();
 builder.Services.AddTransient<EmailService>();
 
 builder.Services.AddAuthentication(options =>

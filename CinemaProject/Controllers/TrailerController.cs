@@ -11,6 +11,7 @@ namespace CinemaProject.Controllers
 {
     [Route("api/[controller]")]
     [ApiController]
+    [Authorize]
     public class TrailerController : ControllerBase
     {
         private static readonly Dictionary<string, string[]> AllowedTrailerTypes = new()
