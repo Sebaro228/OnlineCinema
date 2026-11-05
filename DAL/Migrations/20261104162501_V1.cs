@@ -6,7 +6,7 @@ using Microsoft.EntityFrameworkCore.Migrations;
 namespace DAL.Migrations
 {
     /// <inheritdoc />
-    public partial class Initial : Migration
+    public partial class V1 : Migration
     {
         /// <inheritdoc />
         protected override void Up(MigrationBuilder migrationBuilder)
@@ -63,7 +63,9 @@ namespace DAL.Migrations
                     VideoExtension = table.Column<string>(type: "nvarchar(max)", nullable: false),
                     VideoMime = table.Column<string>(type: "nvarchar(max)", nullable: false),
                     PosterExtension = table.Column<string>(type: "nvarchar(max)", nullable: false),
-                    PosterMime = table.Column<string>(type: "nvarchar(max)", nullable: false)
+                    PosterMime = table.Column<string>(type: "nvarchar(max)", nullable: false),
+                    PosterBlobPath = table.Column<string>(type: "nvarchar(max)", nullable: false),
+                    VideoBlobPath = table.Column<string>(type: "nvarchar(max)", nullable: false)
                 },
                 constraints: table =>
                 {
@@ -208,6 +210,7 @@ namespace DAL.Migrations
                     Title = table.Column<string>(type: "nvarchar(max)", nullable: false),
                     Extension = table.Column<string>(type: "nvarchar(max)", nullable: false),
                     Mime = table.Column<string>(type: "nvarchar(max)", nullable: false),
+                    BlobPath = table.Column<string>(type: "nvarchar(max)", nullable: false),
                     Date = table.Column<DateOnly>(type: "date", nullable: false),
                     FilmId = table.Column<string>(type: "nvarchar(450)", nullable: false)
                 },

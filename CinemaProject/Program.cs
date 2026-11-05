@@ -25,11 +25,14 @@ builder.Services.AddControllers();
 // Learn more about configuring Swagger/OpenAPI at https://aka.ms/aspnetcore/swashbuckle
 builder.Services.AddEndpointsApiExplorer();
 
-var keyVaultUri = new Uri("https://forcinemaproject.vault.azure.net/");
-builder.Configuration.AddAzureKeyVault(
-    keyVaultUri,
-    new DefaultAzureCredential()
-);
+if (builder.Environment.IsDevelopment())
+{
+    var keyVaultUri = new Uri("https://forcinemaproject.vault.azure.net/");
+    builder.Configuration.AddAzureKeyVault(
+        keyVaultUri,
+        new DefaultAzureCredential()
+    );
+}
 
 builder.Services.AddSingleton(serviceProvider =>
 {
@@ -162,6 +165,15 @@ if (app.Environment.IsDevelopment())
 {
     app.UseSwagger();
     app.UseSwaggerUI();
+}
+else
+{
+    app.UseSwagger();
+    app.UseSwaggerUI(c =>
+    {
+        c.SwaggerEndpoint("/swagger/v1/swagger.json", "Cinema API V1");
+        c.RoutePrefix = string.Empty; 
+    });
 }
 
 app.UseHttpsRedirection();
