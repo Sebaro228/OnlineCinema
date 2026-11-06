@@ -24,8 +24,8 @@ namespace DAL.Seeder
         public static async Task SeedAdminUserAsync(IServiceProvider provider)
         {
             var userManager = provider.GetRequiredService<UserManager<User>>();
-            var email = "admin@gmail.com";
-            var name = "superAdmin";
+            var email = "admin@coolcinema.me";
+            var name = "cinema";
             var password = "Admin228@";
             var admin = await userManager.FindByEmailAsync(email);
             if (admin == null)
