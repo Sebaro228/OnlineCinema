@@ -6,6 +6,7 @@ using DAL.Repository;
 using Domain.DTOs;
 using Domain.Models;
 using Domain.Roles;
+using Google.Apis.Auth;
 using Microsoft.AspNetCore.Identity;
 using Org.BouncyCastle.Crypto.Generators;
 using System;
@@ -24,6 +25,30 @@ namespace BLL.Services
             if (user == null) return (false, "User not found", null);
             var res = await signInManager.PasswordSignInAsync(user, login.Password, true, false);
             if (!res.Succeeded) return (false, "Invalid password", null);
+            var responce = await GetAuthResponceAsync(user);
+            return (true, "Success", responce);
+        }
+        public async Task<(bool success, string message, AuthResponse? response)> GoogleAuth(ProviderAuthRequest request)
+        {
+            var payload = await GoogleJsonWebSignature.ValidateAsync(request.ProviderToken);
+            var user = await userManager.FindByEmailAsync(payload.Email);
+            if (user == null)
+            {
+                user = new User
+                {
+                    UserName = payload.Email.Split('@')[0],
+                    Email = payload.Email,
+                    EmailConfirmed = true
+                };
+                var result = await userManager.CreateAsync(user);
+                if (!result.Succeeded)
+                {
+                    var errors = result.Errors.Select(x => x.Description);
+                    return (false, string.Join(", ", errors), null);
+                }
+                await userManager.AddToRoleAsync(user, Roles.User);
+            }
+            await signInManager.SignInAsync(user, true);
             var responce = await GetAuthResponceAsync(user);
             return (true, "Success", responce);
         }

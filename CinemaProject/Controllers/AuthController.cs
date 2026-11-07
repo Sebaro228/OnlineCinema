@@ -1,7 +1,9 @@
 ﻿using BLL.Interfaces;
 using BLL.Services;
 using Domain.DTOs;
+using Domain.Enums;
 using Domain.Models;
+using Google.Apis.Auth;
 using Microsoft.AspNetCore.Http;
 using Microsoft.AspNetCore.Mvc;
 
@@ -31,6 +33,25 @@ namespace CinemaProject.Controllers
                 return BadRequest(res.message);
             }
             return Ok(res.message);
+        }
+        [HttpPost("ProviderAuth")]
+        public async Task<IActionResult> ProviderAuth(ProviderAuthRequest request)
+        {
+            if (request.ProviderType == Provider.Google)
+            {
+                var res = await authService.GoogleAuth(request);
+                if (!res.success) return BadRequest(res.message);
+                return Ok(res.response);
+            }
+            if (request.ProviderType == Provider.Apple)
+            {
+            
+            }
+            if (request.ProviderType == Provider.PhoneNumber)
+            {
+
+            }
+            return Ok();
         }
         [HttpPost("logout")]
         public async Task<IActionResult> Logout([FromBody] RefreshTokenRequest refreshTokenRequest)
