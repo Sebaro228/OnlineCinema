@@ -1,4 +1,5 @@
-﻿using AutoMapper;
+using AutoMapper;
+using DAL.Repository;
 using Domain.DTOs;
 using Domain.Models;
 using Microsoft.AspNetCore.Identity;
@@ -10,7 +11,7 @@ using System.Threading.Tasks;
 
 namespace BLL.Services
 {
-    public class ProfileService(UserManager<User> manager, IMapper mapper)
+    public class ProfileService(UserManager<User> manager, IMapper mapper, RefreshTokenRepository refreshTokenRepository)
     {
         public async Task<UserDto> GetProfileAsync(string id)
         {
@@ -33,7 +34,12 @@ namespace BLL.Services
             var user = await manager.FindByIdAsync(id);
             if (user == null) throw new Exception("User not found");
             var res = await manager.ChangePasswordAsync(user, changePasswordDTO.OldPassword, changePasswordDTO.NewPassword);
-            if (res.Succeeded) return (true, null);
+            if (res.Succeeded)
+            {
+                await refreshTokenRepository.RevokeAllAsync(user.Id);
+                await refreshTokenRepository.SaveChangeAsync();
+                return (true, null);
+            }
             var error = string.Join(", ", res.Errors.Select(x => x.Description));
             return (false, error);
         }

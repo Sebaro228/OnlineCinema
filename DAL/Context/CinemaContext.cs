@@ -1,4 +1,4 @@
-﻿using Azure.Core;
+using Azure.Core;
 using Domain.Models;
 using Microsoft.AspNetCore.Identity.EntityFrameworkCore;
 using Microsoft.EntityFrameworkCore;
@@ -19,14 +19,14 @@ namespace DAL.Context
             public DbSet<RefreshToken> RefreshTokens { get; set; }
 
             protected override void OnModelCreating(ModelBuilder modelBuilder)
-                {
-                    base.OnModelCreating(modelBuilder);
+            {
+                base.OnModelCreating(modelBuilder);
 
-                    modelBuilder.Entity<Film>()
-                        .HasMany(f => f.Trailers)
-                        .WithOne(t => t.Film)
-                        .HasForeignKey(t => t.FilmId)
-                        .OnDelete(DeleteBehavior.Cascade);
-                }
+                modelBuilder.Entity<Film>()
+                    .HasMany(f => f.Trailers)
+                    .WithOne(t => t.Film)
+                    .HasForeignKey(t => t.FilmId)
+                    .OnDelete(DeleteBehavior.Cascade);
+            }
         }
 }

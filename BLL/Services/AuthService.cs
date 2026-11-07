@@ -1,4 +1,4 @@
-﻿using AutoMapper;
+using AutoMapper;
 using AutoMapper.Execution;
 using BCrypt.Net;
 using BLL.Interfaces;
@@ -112,6 +112,8 @@ namespace BLL.Services
                 var error = res.Errors.Select(x => x.Description);
                 return (false, string.Join(", ", error));
             }
+            await refreshTokenRepository.RevokeAllAsync(user.Id);
+            await refreshTokenRepository.SaveChangeAsync();
             return (true, null);
         }
         public async Task<string> GetConfirmTokenAsync(string id)
