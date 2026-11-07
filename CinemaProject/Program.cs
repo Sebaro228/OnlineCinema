@@ -110,6 +110,7 @@ builder.Services.AddScoped<UserService>();
 builder.Services.AddScoped<RefreshTokenRepository>();
 builder.Services.AddScoped<AuthService>();
 builder.Services.AddScoped<JwtService>();
+builder.Services.AddScoped<ProfileService>();
 builder.Services.AddScoped<UserRepository>();
 builder.Services.AddTransient<EmailService>();
 

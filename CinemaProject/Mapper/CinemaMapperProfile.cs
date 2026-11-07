@@ -11,6 +11,7 @@ namespace CinemaProject.Mapper
             CreateMap<FilmDto, Film>();
             CreateMap<TrailerDto, Trailer>();
             CreateMap<RegisterRequest, User>();
+            CreateMap<UserDto, User>().ReverseMap();
         }
     }
 }
