@@ -9,5 +9,6 @@ namespace Domain.Models
     public class User : IdentityUser
     {
         public DateTime CreatedAt { get; set; } = DateTime.UtcNow;
+        public string? Avatar { get; set; }
     }
 }
