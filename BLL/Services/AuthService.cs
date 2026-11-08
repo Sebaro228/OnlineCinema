@@ -89,7 +89,9 @@ namespace BLL.Services
                 return (false, string.Join('\n', errors));
             }
             var token = await GetConfirmTokenAsync(user.Id);
-            var msg = $"Copy your token for confirmation {token}";
+            var confirmationLink = $"https://cinema-frontend-black.vercel.app/confirm-email?email={Uri.EscapeDataString(register.Email)}&token={Uri.EscapeDataString(token)}";
+            var msg = $"<p>Follow the link to confirm your email:</p>" +
+                      $"<p><a href=\"{confirmationLink}\">Confirm Email</a></p>";
             await emailService.SendEmailAsync(register.Email, "Account confirmation", msg);
             await userManager.AddToRoleAsync(user, Roles.User);
             return (true, "Check your email");
@@ -151,6 +153,10 @@ namespace BLL.Services
             var user = await userManager.FindByEmailAsync(email);
             if (user == null) return (false, "User not found");
             var res = await userManager.ConfirmEmailAsync(user, token);
+            if (!res.Succeeded && token.Contains(' '))
+            {
+                res = await userManager.ConfirmEmailAsync(user, token.Replace(' ', '+'));
+            }
             if (!res.Succeeded)
             {
                 var error = res.Errors.Select(x => x.Description);

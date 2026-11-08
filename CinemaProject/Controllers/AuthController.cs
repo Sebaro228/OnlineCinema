@@ -6,6 +6,7 @@ using Domain.Models;
 using Google.Apis.Auth;
 using Microsoft.AspNetCore.Http;
 using Microsoft.AspNetCore.Mvc;
+using Microsoft.Win32;
 
 namespace CinemaProject.Controllers
 {
@@ -79,7 +80,9 @@ namespace CinemaProject.Controllers
         {
             var token = await authService.GenereateTokenAsync(model.Email);
             if (string.IsNullOrEmpty(token)) return BadRequest("Invalid email");
-            var msg = $"Copy your token for resetting {token}";
+            var confirmationLink = $"https://cinema-frontend-black.vercel.app/reset-password?email={Uri.EscapeDataString(model.Email)}&token={Uri.EscapeDataString(token)}";
+            var msg = $"<p>Follow the link to reset your password:</p>" +
+                      $"<p><a href=\"{confirmationLink}\">Reset Password</a></p>";
             await emailService.SendEmailAsync(model.Email, "Password reset", msg);
             return Ok("Check your email");
         }
