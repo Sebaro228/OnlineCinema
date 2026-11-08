@@ -44,14 +44,6 @@ namespace CinemaProject.Controllers
                 if (!res.success) return BadRequest(res.message);
                 return Ok(res.response);
             }
-            if (request.ProviderType == Provider.Apple)
-            {
-            
-            }
-            if (request.ProviderType == Provider.PhoneNumber)
-            {
-
-            }
             return Ok();
         }
         [HttpPost("logout")]
