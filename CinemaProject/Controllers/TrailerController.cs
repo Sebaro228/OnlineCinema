@@ -11,7 +11,7 @@ namespace CinemaProject.Controllers
 {
     [Route("api/[controller]")]
     [ApiController]
-    [Authorize]
+    //[Authorize]
     public class TrailerController : ControllerBase
     {
         private static readonly Dictionary<string, string[]> AllowedTrailerTypes = new()
@@ -37,7 +37,7 @@ namespace CinemaProject.Controllers
         }
 
         [HttpPost("Create")]
-        [Authorize(Roles = "ContentManager")]
+        //[Authorize(Roles = "ContentManager")]
         public async Task<IActionResult> CreateTrailer(TrailerDto dto)
         {
             Film? f = await _service.GetAsync(dto.FilmId);
@@ -51,8 +51,8 @@ namespace CinemaProject.Controllers
         }
 
         [HttpPost("CreateFile")]
-        [Authorize(Roles = "ContentManager")]
-        public async Task<IActionResult> CreateTrailerFile(int trailerId, IFormFile trailer)
+        //[Authorize(Roles = "ContentManager")]
+        public async Task<IActionResult> CreateTrailerFile(string trailerId, IFormFile trailer)
         {
             if (trailer is null)
                 return BadRequest("The trailer is null");
@@ -81,20 +81,20 @@ namespace CinemaProject.Controllers
         }
 
         [HttpDelete("Delete")]
-        [Authorize(Roles = "ContentManager")]
-        public async Task<IActionResult> DeleteTrailerData(int trailerId)
+        //[Authorize(Roles = "ContentManager")]
+        public async Task<IActionResult> DeleteTrailerData(string trailerId)
         {
             Trailer? t = await _service.GetTrailerDataAsync(trailerId);
             if (t is null)
                 return NotFound("The trailer has not been found");
-
-            await _service.DeleteTrailerDataAsync(trailerId);
+            
             await _service.DeleteTrailerFileAsync(trailerId);
+            await _service.DeleteTrailerDataAsync(trailerId);
             return Ok();
         }
 
         [HttpGet("Get")]
-        public async Task<IActionResult> GetTrailer(int trailerId)
+        public async Task<IActionResult> GetTrailer(string trailerId)
         {
             Trailer? t = await _service.GetTrailerDataAsync(trailerId);
             if (t is null)
@@ -104,7 +104,7 @@ namespace CinemaProject.Controllers
         }
 
         [HttpGet("GetFile")]
-        public async Task<IActionResult> GetTrailerStream(int trailerId)
+        public async Task<IActionResult> GetTrailerStream(string trailerId)
         {
             Trailer? t = await _service.GetTrailerDataAsync(trailerId);
             if (t is null)
@@ -125,28 +125,34 @@ namespace CinemaProject.Controllers
         }
 
         [HttpPut("UpdateData")]
-        [Authorize(Roles = "ContentManager")]
-        public async Task<IActionResult> UpdateTrailerData(int id, TrailerDto dto)
+        //[Authorize(Roles = "ContentManager")]
+        public async Task<IActionResult> UpdateTrailerData(string id, TrailerDto dto)
         {
             Trailer? t = await _service.GetTrailerDataAsync(id);
             if (t is null)
                 return NotFound("The trailer has not been found");
 
-            Film? newFilm = await _service.GetAsync(dto.FilmId);
-            if (newFilm is null)
-                return NotFound("A new film has not been found");
+            if (!string.IsNullOrEmpty(dto.FilmId))
+            {
+                Film? newFilm = await _service.GetAsync(dto.FilmId);
+                if (newFilm is null)
+                    return NotFound("A new film has not been found");
 
-            t.FilmId = dto.FilmId;
-            t.Film = newFilm;
-            t.Title = dto.Title;
-            t.Date = dto.Date;
+                t.FilmId = dto.FilmId;
+                t.Film = newFilm;
+            }
+
+            if(!string.IsNullOrEmpty(dto.Title))
+                t.Title = dto.Title;
+            if(dto.Date != default && dto.Date < DateOnly.FromDateTime(DateTime.UtcNow))
+                t.Date = dto.Date;
             await _service.UpdateTrailerDataAsync(t);
             return Ok();
         }
 
         [HttpPut("UpdateFile")]
-        [Authorize(Roles = "ContentManager")]
-        public async Task<IActionResult> UpdateTrailerFile(int trailerId, IFormFile trailer)
+        //[Authorize(Roles = "ContentManager")]
+        public async Task<IActionResult> UpdateTrailerFile(string trailerId, IFormFile trailer)
         {
             Trailer? t = await _service.GetTrailerDataAsync(trailerId);
             if (t is null)

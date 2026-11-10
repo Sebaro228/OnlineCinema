@@ -104,11 +104,8 @@ namespace DAL.Migrations
 
             modelBuilder.Entity("Domain.Models.Trailer", b =>
                 {
-                    b.Property<int>("Id")
-                        .ValueGeneratedOnAdd()
-                        .HasColumnType("int");
-
-                    SqlServerPropertyBuilderExtensions.UseIdentityColumn(b.Property<int>("Id"));
+                    b.Property<string>("Id")
+                        .HasColumnType("nvarchar(450)");
 
                     b.Property<string>("BlobPath")
                         .IsRequired()

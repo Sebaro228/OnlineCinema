@@ -87,7 +87,7 @@ namespace DAL.Repository
             return await blobClient.OpenReadAsync();
         }
 
-        public async Task<Trailer?> GetTrailerDataAsync(int trailerId)
+        public async Task<Trailer?> GetTrailerDataAsync(string trailerId)
             => _context.Trailers.Include(t => t.Film).FirstOrDefault(tr => tr.Id == trailerId);
 
         public async Task<Stream> GetTrailerFileAsync(Trailer t)

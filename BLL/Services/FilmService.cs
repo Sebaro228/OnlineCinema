@@ -106,7 +106,7 @@ namespace BLL.Services
             await _repository.SaveChangeAsync();
         }
 
-        public async Task DeleteTrailerDataAsync(int id)
+        public async Task DeleteTrailerDataAsync(string id)
         {
             Trailer? t = await _repository.GetTrailerDataAsync(id);
             if(t is null)
@@ -115,7 +115,7 @@ namespace BLL.Services
             await _repository.SaveChangeAsync();
         }
 
-        public async Task DeleteTrailerFileAsync(int id)
+        public async Task DeleteTrailerFileAsync(string id)
         {
             Trailer? t = await _repository.GetTrailerDataAsync(id);
             if (t is null)
@@ -153,12 +153,12 @@ namespace BLL.Services
             return await _repository.GetPosterAsync(f);
         }
 
-        public async Task<Trailer?> GetTrailerDataAsync(int id)
+        public async Task<Trailer?> GetTrailerDataAsync(string id)
         {
             return await _repository.GetTrailerDataAsync(id);
         }
 
-        public async Task<Stream> GetTrailerFileAsync(int id)
+        public async Task<Stream> GetTrailerFileAsync(string id)
         {
             Trailer? t = await _repository.GetTrailerDataAsync(id);
             if (t is null)

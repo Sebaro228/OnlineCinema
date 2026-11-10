@@ -11,7 +11,7 @@ namespace CinemaProject.Controllers
 {
     [ApiController]
     [Route("api/[controller]")]
-    [Authorize]
+    //[Authorize]
     public class FilmController : ControllerBase
     {
         private readonly IFilmService _service;
@@ -24,7 +24,7 @@ namespace CinemaProject.Controllers
         }
 
         [HttpPost("Create")]
-        [Authorize(Roles = "ContentManager")]
+        //[Authorize(Roles = "ContentManager")]
         public async Task<IActionResult> CreateFilm([FromBody] FilmDto dto)
         {
             Film f = _mapper.Map<Film>(dto);
@@ -33,7 +33,7 @@ namespace CinemaProject.Controllers
         }
 
         [HttpDelete("Delete")]
-        [Authorize(Roles = "ContentManager")]
+        //[Authorize(Roles = "ContentManager")]
         public async Task<IActionResult> Delete(string id)
         {
             if (await _service.FirstOrDefaultAsync(f => f.Id == id) is null)
@@ -59,7 +59,7 @@ namespace CinemaProject.Controllers
         }
 
         [HttpPut("Update")]
-        [Authorize(Roles = "ContentManager")]
+        //[Authorize(Roles = "ContentManager")]
         public async Task<IActionResult> Update(string id, FilmDto dto)
         {
             Film? f = await _service.GetAsync(id);

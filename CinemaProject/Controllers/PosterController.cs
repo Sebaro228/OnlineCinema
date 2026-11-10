@@ -10,7 +10,7 @@ namespace CinemaProject.Controllers
 {
     [Route("api/[controller]")]
     [ApiController]
-    [Authorize]
+    //[Authorize]
     public class PosterController : ControllerBase
     {
         private static readonly Dictionary<string, string[]> AllowedPosterTypes = new()
@@ -29,7 +29,7 @@ namespace CinemaProject.Controllers
 
 
         [HttpPost("Create")]
-        [Authorize(Roles = "ContentManager")]
+        //[Authorize(Roles = "ContentManager")]
         public async Task<IActionResult> CreatePoster(string id, IFormFile poster)
         {
             Film? f = await _service.GetAsync(id);
@@ -63,7 +63,7 @@ namespace CinemaProject.Controllers
         }
 
         [HttpDelete("Delete")]
-        [Authorize(Roles = "ContentManager")]
+        //[Authorize(Roles = "ContentManager")]
         public async Task<IActionResult> DeletePoster(string id)
         {
             Film? f = await _service.GetAsync(id);
@@ -90,7 +90,7 @@ namespace CinemaProject.Controllers
         }
 
         [HttpPut("Update")]
-        [Authorize(Roles = "ContentManager")]
+        //[Authorize(Roles = "ContentManager")]
         public async Task<IActionResult> UpdatePoster(string id, IFormFile poster)
         {
             Film? f = await _service.GetAsync(id);

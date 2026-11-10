@@ -16,13 +16,13 @@ namespace BLL.Interfaces
 
         public Task<Stream> GetPosterAsync(Film f);
         public Task<Stream> GetVideoAsync(Film f);
-        public Task<Trailer?> GetTrailerDataAsync(int id);
-        public Task<Stream> GetTrailerFileAsync(int id);
+        public Task<Trailer?> GetTrailerDataAsync(string id);
+        public Task<Stream> GetTrailerFileAsync(string id);
 
         public Task DeletePosterAsync(Film f);
         public Task DeleteVideoAsync(Film f);
-        public Task DeleteTrailerDataAsync(int id);
-        public Task DeleteTrailerFileAsync(int id);
+        public Task DeleteTrailerDataAsync(string id);
+        public Task DeleteTrailerFileAsync(string id);
         protected Task DeleteAllTrailersAsync(Film f);
 
         public Task UpdatePosterAsync(Film f, Stream s, string newExt, string newMime);
