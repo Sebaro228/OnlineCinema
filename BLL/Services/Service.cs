@@ -17,12 +17,9 @@ namespace BLL.Services
             await repository.SaveChangeAsync();
         }
 
-        public virtual async Task DeleteAsync(string id)
+        public virtual async Task DeleteAsync(T item)
         {
-            T? i = await repository.GetAsync(id);
-            if (i is null)
-                return;
-            await repository.DeleteAsync(i);
+            await repository.DeleteAsync(item);
             await repository.SaveChangeAsync();
         }
 

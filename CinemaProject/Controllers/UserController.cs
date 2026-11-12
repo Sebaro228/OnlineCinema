@@ -1,4 +1,5 @@
 ﻿using BLL.Services;
+using Domain.Models;
 using Domain.Roles;
 using Microsoft.AspNetCore.Authorization;
 using Microsoft.AspNetCore.Http;
@@ -36,7 +37,11 @@ namespace CinemaProject.Controllers
         [HttpDelete("Delete")]
         public async Task<IActionResult> Delete(string id)
         {
-            await service.DeleteAsync(id);
+            var user = await service.GetAsync(id);
+            if (user is null)
+                return NotFound();
+
+            await service.DeleteAsync(user);
             return Ok();
         }
     }

@@ -106,6 +106,9 @@ builder.Services.AddScoped<IRepository<User>, UserRepository>();
 
 builder.Services.AddScoped<IFilmService, FilmService>();
 builder.Services.AddScoped<IFilmRepository, FilmRepository>();
+builder.Services.AddScoped<IParticipantRepository, ParticipantRepository>();
+builder.Services.AddScoped<IParticipantService, ParticipantService>();
+
 builder.Services.AddScoped<UserService>();
 builder.Services.AddScoped<RefreshTokenRepository>();
 builder.Services.AddScoped<AuthService>();

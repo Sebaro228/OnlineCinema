@@ -27,19 +27,27 @@ namespace CinemaProject.Controllers
         //[Authorize(Roles = "ContentManager")]
         public async Task<IActionResult> CreateFilm([FromBody] FilmDto dto)
         {
+            if(string.IsNullOrEmpty(dto.Title))
+                return BadRequest("A title can not be empty");
+            if(string.IsNullOrEmpty(dto.Description))
+                return BadRequest("A description can not be empty");
+            if (dto.Year < 1880 || dto.Year > DateTime.Now.Year)
+                return BadRequest("A year can not be below 1880 and not above current year");
+
             Film f = _mapper.Map<Film>(dto);
             await _service.CreateAsync(f);
-            return Created();
+            return Ok(f);
         }
 
         [HttpDelete("Delete")]
         //[Authorize(Roles = "ContentManager")]
         public async Task<IActionResult> Delete(string id)
         {
-            if (await _service.FirstOrDefaultAsync(f => f.Id == id) is null)
+            Film? f = await _service.GetAsync(id);
+            if (f is null)
                 return NotFound();
 
-            await _service.DeleteAsync(id);
+            await _service.DeleteAsync(f);
             return Ok("Deleted");
         }
 
@@ -66,10 +74,14 @@ namespace CinemaProject.Controllers
             if (f is null)
                 return NotFound();
 
-            if(!string.IsNullOrEmpty(dto.Title))
-                f.Title = dto.Title;
-            if(dto.Year != 0)
+            if (dto.Year != 0)
+            {
+                if (dto.Year < 1880 || dto.Year > DateTime.Now.Year)
+                    return BadRequest("A year can not be below 1880 and not above current year");
                 f.Year = dto.Year;
+            }
+            if (!string.IsNullOrEmpty(dto.Title))
+                f.Title = dto.Title;
             if (!string.IsNullOrEmpty(dto.Description))
                 f.Description = dto.Description;
             

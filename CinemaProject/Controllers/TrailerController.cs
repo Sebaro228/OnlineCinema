@@ -44,10 +44,15 @@ namespace CinemaProject.Controllers
             if (f is null)
                 return NotFound("The film was not found");
 
+            if (string.IsNullOrEmpty(dto.Title))
+                return BadRequest("A title can not be empty");
+            if (dto.Date == default || dto.Date > DateOnly.FromDateTime(DateTime.UtcNow))
+                return BadRequest("A date is not suitable");
+
             Trailer t = _mapper.Map<Trailer>(dto);
 
             await _service.CreateTrailerDataAsync(f, t);
-            return Created();
+            return Ok(t.Id);
         }
 
         [HttpPost("CreateFile")]
@@ -86,7 +91,7 @@ namespace CinemaProject.Controllers
         {
             Trailer? t = await _service.GetTrailerDataAsync(trailerId);
             if (t is null)
-                return NotFound("The trailer has not been found");
+                return NotFound();
             
             await _service.DeleteTrailerFileAsync(trailerId);
             await _service.DeleteTrailerDataAsync(trailerId);
@@ -98,7 +103,7 @@ namespace CinemaProject.Controllers
         {
             Trailer? t = await _service.GetTrailerDataAsync(trailerId);
             if (t is null)
-                return NotFound("The trailer has not been found");
+                return NotFound();
 
             return Ok(t);
         }
