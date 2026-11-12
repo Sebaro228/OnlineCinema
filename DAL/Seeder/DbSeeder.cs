@@ -1,6 +1,7 @@
 ﻿using Domain.Models;
 using Domain.Roles;
 using Microsoft.AspNetCore.Identity;
+using Microsoft.Extensions.Configuration;
 using Microsoft.Extensions.DependencyInjection;
 using System;
 using System.Collections.Generic;
@@ -21,12 +22,12 @@ namespace DAL.Seeder
             if (!await roleManager.RoleExistsAsync(Roles.ContentReviewer)) await roleManager.CreateAsync(new IdentityRole(Roles.ContentReviewer));
             if (!await roleManager.RoleExistsAsync(Roles.SupportAgent)) await roleManager.CreateAsync(new IdentityRole(Roles.SupportAgent));
         }
-        public static async Task SeedAdminUserAsync(IServiceProvider provider)
+        public static async Task SeedAdminUserAsync(IServiceProvider provider, IConfiguration configuration)
         {
             var userManager = provider.GetRequiredService<UserManager<User>>();
             var email = "admin@coolcinema.me";
             var name = "cinema";
-            var password = "Admin228@";
+            var password = configuration["AdminPassword"];
             var admin = await userManager.FindByEmailAsync(email);
             if (admin == null)
             {
