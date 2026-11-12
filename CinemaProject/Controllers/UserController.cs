@@ -11,13 +11,18 @@ namespace CinemaProject.Controllers
     [Authorize(Roles = Roles.Admin)]
     public class UserController(UserService service) : ControllerBase
     {
-        [HttpPost("ChangeRole")]
-        public async Task<IActionResult> ChangeRole(string id, string role)
+        [HttpPost("AddRole")]
+        public async Task<IActionResult> AddRole(string id, string role)
         {
-            await service.ChangeRole(id, role);
-            return Ok(); 
+            await service.AddRole(id, role);
+            return Ok();
         }
-
+        [HttpPost("RemoveRole")]
+        public async Task<IActionResult> RemoveRole(string id, string role)
+        {
+            await service.RemoveRole(id, role);
+            return Ok();
+        }
         [HttpGet("GetAll")]
         public async Task<IActionResult> GetAll()
         {

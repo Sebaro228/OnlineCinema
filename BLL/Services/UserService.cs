@@ -18,14 +18,17 @@ namespace BLL.Services
             _userManager = userManager;
             _roleManager = roleManager;
         }
-
-        public async Task ChangeRole(string id, string role)
+        public async Task AddRole(string id, string role)
         {
             var user = await _userManager.FindByIdAsync(id);
             if (user == null) return;
-            var roles = await _userManager.GetRolesAsync(user);
-            await _userManager.RemoveFromRolesAsync(user, roles);
             if (await _roleManager.RoleExistsAsync(role)) await _userManager.AddToRoleAsync(user, role);
+        }
+        public async Task RemoveRole(string id, string role)
+        {
+            var user = await _userManager.FindByIdAsync(id);
+            if (user == null) return;
+            if (await _roleManager.RoleExistsAsync(role)) await _userManager.RemoveFromRoleAsync(user, role);
         }
     }
 }
