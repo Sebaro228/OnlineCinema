@@ -14,13 +14,15 @@ namespace CinemaProject.Controllers
         [HttpPost("AddRole")]
         public async Task<IActionResult> AddRole(string id, string role)
         {
-            await service.AddRole(id, role);
+            var (success, message) = await service.AddRole(id, role);
+            if (!success) return BadRequest(message);
             return Ok();
         }
         [HttpPost("RemoveRole")]
         public async Task<IActionResult> RemoveRole(string id, string role)
         {
-            await service.RemoveRole(id, role);
+            var (success, message) = await service.RemoveRole(id, role);
+            if (!success) return BadRequest(message);
             return Ok();
         }
         [HttpGet("GetAll")]

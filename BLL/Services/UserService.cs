@@ -18,17 +18,29 @@ namespace BLL.Services
             _userManager = userManager;
             _roleManager = roleManager;
         }
-        public async Task AddRole(string id, string role)
+        public async Task<(bool success, string message)> AddRole(string id, string role)
         {
             var user = await _userManager.FindByIdAsync(id);
-            if (user == null) return;
-            if (await _roleManager.RoleExistsAsync(role)) await _userManager.AddToRoleAsync(user, role);
+            if (user == null) return (false, "User not found");
+            if (await _roleManager.RoleExistsAsync(role))
+            {
+                await _userManager.AddToRoleAsync(user, role);
+                if ((await _userManager.GetRolesAsync(user)).Count > 1) await RemoveRole(id, "User");
+                return (true, "Role added successfully");
+            }
+            return (false, "Role not found");
         }
-        public async Task RemoveRole(string id, string role)
+        public async Task<(bool success, string message)> RemoveRole(string id, string role)
         {
             var user = await _userManager.FindByIdAsync(id);
-            if (user == null) return;
-            if (await _roleManager.RoleExistsAsync(role)) await _userManager.RemoveFromRoleAsync(user, role);
+            if (user == null) return (false, "User not found");
+            if (role == "Admin") return (false, "Cannot remove Admin role");
+            if (await _roleManager.RoleExistsAsync(role))
+            {
+                await _userManager.RemoveFromRoleAsync(user, role);
+                return (true, "Role removed successfully");
+            }
+            return (false, "Role not found");
         }
     }
 }
