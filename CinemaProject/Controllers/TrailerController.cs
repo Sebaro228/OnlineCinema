@@ -141,7 +141,7 @@ namespace CinemaProject.Controllers
             {
                 Film? newFilm = await _service.GetAsync(dto.FilmId);
                 if (newFilm is null)
-                    return NotFound("A new film has not been found");
+                    return BadRequest("A new film has not been found");
 
                 t.FilmId = dto.FilmId;
                 t.Film = newFilm;

@@ -15,5 +15,6 @@ namespace BLL.Interfaces
         Task<T?> GetAsync(string id);
         Task<IEnumerable<T>> GetAllAsync();
         Task<T?> FirstOrDefaultAsync(Expression<Func<T, bool>> pred);
+        Task<bool> AnyAsync(Expression<Func<T, bool>> pred);
     }
 }

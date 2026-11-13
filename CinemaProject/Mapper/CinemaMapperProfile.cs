@@ -1,5 +1,6 @@
 ﻿using AutoMapper;
 using Domain.DTOs;
+using Domain.Linking;
 using Domain.Models;
 
 namespace CinemaProject.Mapper
@@ -13,6 +14,7 @@ namespace CinemaProject.Mapper
             CreateMap<ParticipantDto, Participant>();
             CreateMap<RegisterRequest, User>();
             CreateMap<UserDto, User>().ReverseMap();
+            CreateMap<FilmParticipationDto, FilmParticipation>();
         }
     }
 }

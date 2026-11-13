@@ -38,5 +38,8 @@ namespace BLL.Services
             repository.Update(item);
             await repository.SaveChangeAsync();
         }
+
+        public virtual async Task<bool> AnyAsync(Expression<Func<T, bool>> pred)
+            => await repository.AnyAsync(pred);
     }
 }

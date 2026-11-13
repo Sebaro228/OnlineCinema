@@ -29,6 +29,7 @@ namespace CinemaProject.Controllers
                 return BadRequest("A field \"Age\" can not equal 0");
 
             Participant p = _mapper.Map<Participant>(dto);
+            await _service.CreateAsync(p);
             return Ok(p);
         }
 

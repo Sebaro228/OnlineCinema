@@ -108,6 +108,8 @@ builder.Services.AddScoped<IFilmService, FilmService>();
 builder.Services.AddScoped<IFilmRepository, FilmRepository>();
 builder.Services.AddScoped<IParticipantRepository, ParticipantRepository>();
 builder.Services.AddScoped<IParticipantService, ParticipantService>();
+builder.Services.AddScoped<IFilmParticipationRepository, FilmParticipationRepository>();
+builder.Services.AddScoped<IFilmParticipationService, FilmParticipationService>();
 
 builder.Services.AddScoped<UserService>();
 builder.Services.AddScoped<RefreshTokenRepository>();

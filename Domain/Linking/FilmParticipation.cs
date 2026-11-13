@@ -12,11 +12,11 @@ namespace Domain.Linking
     {
         public string Id { get; set; } = Guid.NewGuid().ToString();
 
-        public string ParticipantId { get; set; }
+        public string ParticipantId { get; set; } = string.Empty;
         [JsonIgnore]
         public Participant Participant { get; set; } = new();
 
-        public string FilmId { get; set; }
+        public string FilmId { get; set; } = string.Empty;
         [JsonIgnore]
         public Film Film { get; set; } = new();
 
