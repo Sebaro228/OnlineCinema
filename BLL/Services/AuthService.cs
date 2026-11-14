@@ -72,7 +72,8 @@ namespace BLL.Services
             refreshTokenEntity.isRevoked = true;
             refreshTokenRepository.Update(refreshTokenEntity);
             await refreshTokenRepository.SaveChangeAsync();
-            var response = await GetAuthResponceAsync(refreshTokenEntity.User);
+            bool rememberMe = refreshTokenEntity.Expired > DateTime.UtcNow.AddDays(1);
+            var response = await GetAuthResponceAsync(refreshTokenEntity.User, rememberMe);
             return (true, "Token refreshed successfully", response);
         }
         public async Task<(bool success, string message)> RegisterAsync(RegisterRequest register)
