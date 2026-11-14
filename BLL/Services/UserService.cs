@@ -22,10 +22,12 @@ namespace BLL.Services
         {
             var user = await _userManager.FindByIdAsync(id);
             if (user == null) return (false, "User not found");
+            if (role == "User") return (false, "Cannot add User role");
             if (await _roleManager.RoleExistsAsync(role))
             {
                 await _userManager.AddToRoleAsync(user, role);
-                if ((await _userManager.GetRolesAsync(user)).Count > 1) await RemoveRole(id, "User");
+                if ((await _userManager.GetRolesAsync(user)).Count > 1)
+                    await _userManager.RemoveFromRoleAsync(user, "User");
                 return (true, "Role added successfully");
             }
             return (false, "Role not found");
@@ -34,7 +36,7 @@ namespace BLL.Services
         {
             var user = await _userManager.FindByIdAsync(id);
             if (user == null) return (false, "User not found");
-            if (role == "Admin") return (false, "Cannot remove Admin role");
+            if (role == "Admin" || role == "User") return (false, "Cannot remove Admin or User role");
             if (await _roleManager.RoleExistsAsync(role))
             {
                 await _userManager.RemoveFromRoleAsync(user, role);

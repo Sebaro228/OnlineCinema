@@ -18,5 +18,6 @@ namespace Domain.DTOs
         [Required]
         [MinLength(8)]
         public string Password { get; set; }
+        public bool RememberMe { get; set; }
     }
 }

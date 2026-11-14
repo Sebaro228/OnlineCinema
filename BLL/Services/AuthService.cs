@@ -23,7 +23,7 @@ namespace BLL.Services
         {
             var user = await userManager.FindByNameAsync(login.UserName);
             if (user == null) return (false, "User not found", null);
-            var res = await signInManager.PasswordSignInAsync(user, login.Password, true, false);
+            var res = await signInManager.PasswordSignInAsync(user, login.Password, login.RememberMe, false);
             if (!res.Succeeded) return (false, "Invalid password", null);
             var responce = await GetAuthResponceAsync(user);
             return (true, "Success", responce);
@@ -96,7 +96,7 @@ namespace BLL.Services
             await userManager.AddToRoleAsync(user, Roles.User);
             return (true, "Check your email");
         }
-        async Task<AuthResponse> GetAuthResponceAsync(User user)
+        async Task<AuthResponse> GetAuthResponceAsync(User user, bool rememberMe = false)
         {
             var jwttoken = await service.GetJwt(user);
             var refreshToken = service.GetRefresh(user);
@@ -105,7 +105,7 @@ namespace BLL.Services
             {
                 UserId = user.Id,
                 Token = refreshToken,
-                Expired = DateTime.UtcNow.AddDays(7),
+                Expired = rememberMe ? DateTime.UtcNow.AddDays(30) : DateTime.UtcNow.AddDays(1),
                 Created = DateTime.UtcNow
             };
 
