@@ -9,7 +9,7 @@ namespace CinemaProject.Controllers
 {
     [Route("api/[controller]")]
     [ApiController]
-    [Authorize]
+    //[Authorize]
     public class VideoController : ControllerBase
     {
         private static readonly Dictionary<string, string[]> AllowedVideoTypes = new()
@@ -31,7 +31,7 @@ namespace CinemaProject.Controllers
         }
 
         [HttpPost("Create")]
-        [Authorize(Roles = "ContentManager")]
+        //[Authorize(Roles = "ContentManager")]
         public async Task<IActionResult> CreateVideo(string id, IFormFile video)
         {
             Film? f = await _service.GetAsync(id);
@@ -65,7 +65,7 @@ namespace CinemaProject.Controllers
         }
 
         [HttpDelete("Delete")]
-        [Authorize(Roles = "ContentManager")]
+        //[Authorize(Roles = "ContentManager")]
         public async Task<IActionResult> DeleteVideo(string id)
         {
             Film? f = await _service.GetAsync(id);
@@ -92,7 +92,7 @@ namespace CinemaProject.Controllers
         }
 
         [HttpPut("UpdateVideo")]
-        [Authorize(Roles = "ContentManager")]
+        //[Authorize(Roles = "ContentManager")]
         public async Task<IActionResult> UpdateVideo(string id, IFormFile video)
         {
             Film? f = await _service.GetAsync(id);

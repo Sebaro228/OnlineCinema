@@ -1,4 +1,6 @@
-﻿namespace Domain.Models
+﻿using Domain.Linking;
+
+namespace Domain.Models
 {
     public class Film
     {
@@ -14,6 +16,6 @@
         public string PosterBlobPath { get; set; } = string.Empty;
         public string VideoBlobPath { get; set; } = string.Empty;
         public List<Trailer> Trailers { get; set; } = new();
-        //public List<CrewMember> Crew
+        public List<FilmParticipation> Participations { get; set; } = new();
     }
 }

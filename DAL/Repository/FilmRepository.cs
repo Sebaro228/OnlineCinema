@@ -28,10 +28,16 @@ namespace DAL.Repository
         public override async Task<Film?> GetAsync(string id)
             => await _context.Films
                 .Include(f => f.Trailers)
-                .FirstOrDefaultAsync(f => f.Id == id);
+                .Include(f => f.Participations)
+                    .ThenInclude(p => p.Participant)
+                .FirstOrDefaultAsync(f => string.Equals(f.Id, id));
 
         public override async Task<IEnumerable<Film>> GetAllAsync()
-            => await _dbSet.Include(f => f.Trailers).ToListAsync();
+            => await _context.Films
+                .Include(f => f.Trailers)
+                .Include(f => f.Participations)
+                    .ThenInclude(p => p.Participant)
+                .ToListAsync();
 
 
 
@@ -87,7 +93,7 @@ namespace DAL.Repository
             return await blobClient.OpenReadAsync();
         }
 
-        public async Task<Trailer?> GetTrailerDataAsync(int trailerId)
+        public async Task<Trailer?> GetTrailerDataAsync(string trailerId)
             => _context.Trailers.Include(t => t.Film).FirstOrDefault(tr => tr.Id == trailerId);
 
         public async Task<Stream> GetTrailerFileAsync(Trailer t)
