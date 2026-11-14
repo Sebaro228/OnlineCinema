@@ -90,7 +90,7 @@ namespace CinemaProject.Controllers
         {
             var res = await authService.ConfirmEmailAsync(email, token);
             if (!res.success) return BadRequest(res.error);
-            return Ok("Account confirmed");
+            return Ok(res.authResponse);
         }
     }
 }

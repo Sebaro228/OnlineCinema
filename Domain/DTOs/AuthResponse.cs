@@ -12,7 +12,7 @@ namespace Domain.DTOs
         public string RefreshToken { get; set; }
         public string UserName { get; set; }
         public string Email { get; set; }
-        public string Role { get; set; }
+        public List<string> Roles { get; set; }
         public DateTime Expiration { get; set; }
     }
 }

@@ -25,7 +25,7 @@ namespace BLL.Services
             if (user == null) return (false, "User not found", null);
             var res = await signInManager.PasswordSignInAsync(user, login.Password, login.RememberMe, false);
             if (!res.Succeeded) return (false, "Invalid password", null);
-            var responce = await GetAuthResponceAsync(user);
+            var responce = await GetAuthResponceAsync(user, login.RememberMe);
             return (true, "Success", responce);
         }
         public async Task<(bool success, string message, AuthResponse? response)> GoogleAuth(ProviderAuthRequest request)
@@ -119,7 +119,7 @@ namespace BLL.Services
                 AccessToken = jwttoken,
                 RefreshToken = refreshToken,
                 Expiration = DateTime.UtcNow.AddMinutes(15),
-                Role = (await userManager.GetRolesAsync(user)).First()
+                Roles = (await userManager.GetRolesAsync(user)).ToList()
             };
         }
         public async Task<string?> GenereateTokenAsync(string email)
@@ -148,10 +148,10 @@ namespace BLL.Services
             var user = await userManager.FindByIdAsync(id);
             return await userManager.GenerateEmailConfirmationTokenAsync(user);
         }
-        public async Task<(bool success, string error)> ConfirmEmailAsync(string email, string token)
+        public async Task<(bool success, string error, AuthResponse? authResponse)> ConfirmEmailAsync(string email, string token)
         {
             var user = await userManager.FindByEmailAsync(email);
-            if (user == null) return (false, "User not found");
+            if (user == null) return (false, "User not found", null);
             var res = await userManager.ConfirmEmailAsync(user, token);
             if (!res.Succeeded && token.Contains(' '))
             {
@@ -160,9 +160,11 @@ namespace BLL.Services
             if (!res.Succeeded)
             {
                 var error = res.Errors.Select(x => x.Description);
-                return (false, string.Join(", ", error));
+                return (false, string.Join(", ", error), null);
             }
-            return (true, null);
+            await signInManager.SignInAsync(user, true);
+            var responce = await GetAuthResponceAsync(user, true);
+            return (true, null, responce);
         }
     }
 }
