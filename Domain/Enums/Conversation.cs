@@ -9,6 +9,7 @@ namespace Domain.Enums
     public enum Conversation
     {
         Email,
-        LiveChat
+        LiveChat,
+        AI 
     }
 }

@@ -11,8 +11,8 @@ namespace Domain.Models
         public string Id { get; set; } = Guid.NewGuid().ToString();
         public string TicketId { get; set; } = string.Empty;
         public string SenderId { get; set; } = string.Empty;
-        public DateTime CreatedAt { get; set; } = DateTime.UtcNow;
+        public DateTime SendedAt { get; set; } = DateTime.UtcNow;
         public string Content { get; set; } = string.Empty;
-        public string? FilePath { get; set; } 
+        public string? FilePath { get; set; }  
     }
 }

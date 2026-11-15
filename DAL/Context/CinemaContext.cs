@@ -19,6 +19,8 @@ namespace DAL.Context
         public DbSet<Trailer> Trailers { get; set; }
         public DbSet<User> Users { get; set; }
         public DbSet<Participant> Participants { get; set; }
+        public DbSet<Ticket> Tickets { get; set; }
+        public DbSet<Message> Messages { get; set; }
 
         public DbSet<RefreshToken> RefreshTokens { get; set; }
         
