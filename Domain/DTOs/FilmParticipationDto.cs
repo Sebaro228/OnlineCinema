@@ -10,6 +10,6 @@ namespace Domain.DTOs
     {
         public string ParticipantId { get; set; } = string.Empty;
         public string FilmId { get; set; } = string.Empty;
-        public string ParticipantRole { get; set; } = string.Empty;
+        public List<string> ParticipantRoles { get; set; } = new();
     }
 }

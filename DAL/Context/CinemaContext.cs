@@ -46,7 +46,7 @@ namespace DAL.Context
                 .OnDelete(DeleteBehavior.Cascade);
 
             modelBuilder.Entity<FilmParticipation>()
-                .HasIndex(fp => new { fp.FilmId, fp.ParticipantId, fp.ParticipantRole })
+                .HasIndex(fp => new { fp.FilmId, fp.ParticipantId, fp.ParticipantRoles })
                 .IsUnique();
         }
     }

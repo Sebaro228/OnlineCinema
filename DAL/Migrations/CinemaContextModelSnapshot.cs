@@ -35,7 +35,7 @@ namespace DAL.Migrations
                         .IsRequired()
                         .HasColumnType("nvarchar(450)");
 
-                    b.Property<string>("ParticipantRole")
+                    b.Property<string>("ParticipantRoles")
                         .IsRequired()
                         .HasColumnType("nvarchar(450)");
 
@@ -43,7 +43,7 @@ namespace DAL.Migrations
 
                     b.HasIndex("ParticipantId");
 
-                    b.HasIndex("FilmId", "ParticipantId", "ParticipantRole")
+                    b.HasIndex("FilmId", "ParticipantId", "ParticipantRoles")
                         .IsUnique();
 
                     b.ToTable("FilmParticipation");

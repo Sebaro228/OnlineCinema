@@ -20,6 +20,6 @@ namespace Domain.Linking
         [JsonIgnore]
         public Film Film { get; set; } = new();
 
-        public string ParticipantRole { get; set; } = string.Empty;
+        public List<string> ParticipantRoles { get; set; } = new();
     }
 }

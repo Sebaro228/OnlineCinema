@@ -39,8 +39,8 @@ namespace CinemaProject.Controllers
             if (!await _filmService.AnyAsync(f => string.Equals(f.Id, dto.FilmId)))
                 return BadRequest("There is no film with this id");
 
-            if (string.IsNullOrEmpty(dto.ParticipantRole))
-                return BadRequest("The role can not be empty");
+            if (!dto.ParticipantRoles.Any())
+                return BadRequest("Participant should have at least one role");
 
             FilmParticipation p = _mapper.Map<FilmParticipation>(dto);
             await _participationService.CreateAsync(p);
@@ -100,8 +100,8 @@ namespace CinemaProject.Controllers
                 par.ParticipantId = dto.ParticipantId;
             }
 
-            if(!string.IsNullOrEmpty(dto.ParticipantRole))
-                par.ParticipantRole = dto.ParticipantRole;
+            if(dto.ParticipantRoles.Any())
+                par.ParticipantRoles = dto.ParticipantRoles;
 
             await _participationService.UpdateAsync(par);
             return Ok();
