@@ -9,10 +9,7 @@ namespace BLL.Interfaces
 {
     public interface IFilmService : IService<Film>
     {
-        public Task CratePosterAsync(Film f, Stream s);
-        public Task CreateVideoAsync(Film f, Stream s);
         public Task CreateTrailerDataAsync(Film f, Trailer t);
-        public Task CreateTrailerFileAsync(Trailer t,  Stream s);
 
         public Task<Stream> GetPosterAsync(Film f);
         public Task<Stream> GetVideoAsync(Film f);

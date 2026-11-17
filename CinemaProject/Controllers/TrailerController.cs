@@ -52,7 +52,7 @@ namespace CinemaProject.Controllers
             Trailer t = _mapper.Map<Trailer>(dto);
 
             await _service.CreateTrailerDataAsync(f, t);
-            return Ok(t.Id);
+            return Ok(t);
         }
 
         [HttpPost("CreateFile")]
