@@ -27,9 +27,11 @@ namespace CinemaProject.Controllers
         //[Authorize(Roles = "ContentManager")]
         public async Task<IActionResult> CreateFilm([FromBody] FilmDto dto)
         {
-            if(string.IsNullOrEmpty(dto.Title))
+            if (dto is null)
+                return BadRequest("The film data can not be null");
+            if (string.IsNullOrWhiteSpace(dto.Title))
                 return BadRequest("A title can not be empty");
-            if(string.IsNullOrEmpty(dto.Description))
+            if (string.IsNullOrWhiteSpace(dto.Description))
                 return BadRequest("A description can not be empty");
             if (dto.Year < 1880 || dto.Year > DateTime.Now.Year)
                 return BadRequest("A year can not be below 1880 and not above current year");
@@ -43,6 +45,9 @@ namespace CinemaProject.Controllers
         //[Authorize(Roles = "ContentManager")]
         public async Task<IActionResult> Delete(string id)
         {
+            if (string.IsNullOrWhiteSpace(id))
+                return BadRequest("A film id can not be empty");
+
             Film? f = await _service.GetAsync(id);
             if (f is null)
                 return NotFound();
@@ -60,6 +65,9 @@ namespace CinemaProject.Controllers
         [HttpGet("Get")]
         public async Task<IActionResult> Get(string id)
         {
+            if (string.IsNullOrWhiteSpace(id))
+                return BadRequest("A film id can not be empty");
+
             Film? f = await _service.GetAsync(id);
             if (f is null)
                 return NotFound();
@@ -70,6 +78,18 @@ namespace CinemaProject.Controllers
         //[Authorize(Roles = "ContentManager")]
         public async Task<IActionResult> Update(string id, FilmDto dto)
         {
+            if (string.IsNullOrWhiteSpace(id))
+                return BadRequest("A film id can not be empty");
+            if (dto is null)
+                return BadRequest("The film data can not be null");
+            if (string.IsNullOrWhiteSpace(dto.Title) &&
+                string.IsNullOrWhiteSpace(dto.Description) && dto.Year == 0)
+                return BadRequest("At least one field must be provided for update");
+            if (!string.IsNullOrEmpty(dto.Title) && string.IsNullOrWhiteSpace(dto.Title))
+                return BadRequest("A title can not be empty");
+            if (!string.IsNullOrEmpty(dto.Description) && string.IsNullOrWhiteSpace(dto.Description))
+                return BadRequest("A description can not be empty");
+
             Film? f = await _service.GetAsync(id);
             if (f is null)
                 return NotFound();
@@ -80,9 +100,9 @@ namespace CinemaProject.Controllers
                     return BadRequest("A year can not be below 1880 and not above current year");
                 f.Year = dto.Year;
             }
-            if (!string.IsNullOrEmpty(dto.Title))
+            if (!string.IsNullOrWhiteSpace(dto.Title))
                 f.Title = dto.Title;
-            if (!string.IsNullOrEmpty(dto.Description))
+            if (!string.IsNullOrWhiteSpace(dto.Description))
                 f.Description = dto.Description;
             
             await _service.UpdateAsync(f);
