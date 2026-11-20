@@ -8,6 +8,8 @@ using Domain.Models;
 using Domain.Roles;
 using Google.Apis.Auth;
 using Microsoft.AspNetCore.Identity;
+using Microsoft.Extensions.Configuration;
+using Org.BouncyCastle.Crypto.Agreement.JPake;
 using Org.BouncyCastle.Crypto.Generators;
 using System;
 using System.Collections.Generic;
@@ -17,7 +19,7 @@ using System.Text;
 using System.Threading.Tasks;
 namespace BLL.Services
 {
-    public class AuthService(JwtService service, RefreshTokenRepository refreshTokenRepository, UserManager<User> userManager, SignInManager<User> signInManager, EmailService emailService, IMapper mapper)
+    public class AuthService(JwtService service, RefreshTokenRepository refreshTokenRepository, UserManager<User> userManager, SignInManager<User> signInManager, EmailService emailService, IMapper mapper, IConfiguration configuration)
     {
         public async Task<(bool success, string message, AuthResponse? response)> LoginAsync(LoginRequest login)
         {
@@ -30,7 +32,19 @@ namespace BLL.Services
         }
         public async Task<(bool success, string message, AuthResponse? response)> GoogleAuth(ProviderAuthRequest request)
         {
-            var payload = await GoogleJsonWebSignature.ValidateAsync(request.ProviderToken);
+            GoogleJsonWebSignature.Payload payload;
+            try
+            {
+                var settings = new GoogleJsonWebSignature.ValidationSettings
+                {
+                    Audience = new[] { configuration["ClientId"] }
+                };
+                payload = await GoogleJsonWebSignature.ValidateAsync(request.ProviderToken, settings);
+            }
+            catch (Exception ex)
+            {
+                return (false, $"Invalid Google token : {ex.Message}", null);
+            }
             var user = await userManager.FindByEmailAsync(payload.Email);
             if (user == null)
             {
