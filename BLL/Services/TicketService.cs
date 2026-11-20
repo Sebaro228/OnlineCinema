@@ -14,11 +14,9 @@ namespace BLL.Services
     public class TicketService : Service<Ticket> 
     {
         IRepository<Ticket> _rep;
-        UserManager<User> _userManager;
-        public TicketService(IRepository<Ticket> rep, UserManager<User> userManager) : base(rep)
+        public TicketService(IRepository<Ticket> rep) : base(rep)
         {
             _rep = rep;
-            _userManager = userManager;
         }
 
         public async Task CreateTicket(CreateTicket request, string userId)
@@ -31,9 +29,24 @@ namespace BLL.Services
             ticket.Messages.Add(new Message
             {
                 Content = request.FirstMessage,
-                FilePath = request.FilePath
+                FilePath = request.FilePath,
+                SenderId = userId
             });
-            await _rep.CreateAsync(ticket);
+            await CreateAsync(ticket);
+        }
+        public async Task<(bool success, string message)> AcceptTicket(string ticketId, string agentId, MessageDto message)
+        {
+            var ticket = await GetAsync(ticketId);
+            if (ticket == null) return (false, "Ticket not found");
+            ticket.AgentId = agentId;
+            ticket.Messages.Add(new Message
+            {
+                Content = message.Content,
+                FilePath = message.FilePath,
+                SenderId = agentId
+            });
+            await UpdateAsync(ticket);
+            return (true, "Ticket accepted successfully");
         }
     }
 }
