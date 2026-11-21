@@ -12,7 +12,7 @@ namespace CinemaProject.Controllers
 {
     [Route("api/[controller]")]
     [ApiController]
-    public class AuthController(AuthService authService, EmailService emailService) : ControllerBase
+    public class AuthController(AuthService authService, EmailService emailService, IConfiguration configuration) : ControllerBase
     {
         [HttpPost("login")]
         public async Task<IActionResult> Login(LoginRequest loginRequest)
@@ -75,7 +75,9 @@ namespace CinemaProject.Controllers
             var confirmationLink = $"https://cinema-frontend-black.vercel.app/reset-password?email={Uri.EscapeDataString(model.Email)}&token={Uri.EscapeDataString(token)}";
             var msg = $"<p>Follow the link to reset your password:</p>" +
                       $"<p><a href=\"{confirmationLink}\">Reset Password</a></p>";
-            await emailService.SendEmailAsync(model.Email, "Password reset", msg);
+            var email = configuration["Resend:FromEmail"];
+            var name = configuration["Resend:FromName"];
+            await emailService.SendEmailAsync(model.Email, "Password reset", msg, email, name, null);
             return Ok("Check your email");
         }
         [HttpPost("ResetPassword")]

@@ -1,4 +1,5 @@
-﻿using System;
+﻿using Domain.Enums;
+using System;
 using System.Collections.Generic;
 using System.Linq;
 using System.Text;
@@ -11,5 +12,6 @@ namespace Domain.DTOs
         public string FirstMessage { get; set; } = string.Empty; 
         public string Topic { get; set; } = string.Empty;
         public string? FilePath { get; set; }
+        public Conversation ConversationType { get; set; } 
     }
 }

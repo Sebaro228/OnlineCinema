@@ -107,7 +107,9 @@ namespace BLL.Services
             var confirmationLink = $"https://cinema-frontend-black.vercel.app/confirm-email?email={Uri.EscapeDataString(register.Email)}&token={Uri.EscapeDataString(token)}";
             var msg = $"<p>Follow the link to confirm your email:</p>" +
                       $"<p><a href=\"{confirmationLink}\">Confirm Email</a></p>";
-            await emailService.SendEmailAsync(register.Email, "Account confirmation", msg);
+            var email = configuration["Resend:FromEmail"];
+            var name = configuration["Resend:FromName"];
+            await emailService.SendEmailAsync(register.Email, "Account confirmation", msg, email, name, null);
             await userManager.AddToRoleAsync(user, Roles.User);
             return (true, "Check your email");
         }
