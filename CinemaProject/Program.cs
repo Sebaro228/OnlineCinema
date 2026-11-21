@@ -1,5 +1,6 @@
 using Azure.Identity;
 using Azure.Storage.Blobs;
+using BLL.Hubs;
 using BLL.Interfaces;
 using BLL.Services;
 using CinemaProject.Mapper;
@@ -110,6 +111,7 @@ builder.Services.AddScoped<IParticipantRepository, ParticipantRepository>();
 builder.Services.AddScoped<IParticipantService, ParticipantService>();
 builder.Services.AddScoped<IFilmParticipationRepository, FilmParticipationRepository>();
 builder.Services.AddScoped<IFilmParticipationService, FilmParticipationService>();
+builder.Services.AddScoped<IRepository<Ticket>, TicketRepository>();
 
 builder.Services.AddScoped<UserService>();
 builder.Services.AddScoped<RefreshTokenRepository>();
@@ -117,8 +119,10 @@ builder.Services.AddScoped<AuthService>();
 builder.Services.AddScoped<JwtService>();
 builder.Services.AddScoped<ProfileService>();
 builder.Services.AddScoped<UserRepository>();
+builder.Services.AddScoped<TicketService>();
 builder.Services.AddTransient<EmailService>();
 
+builder.Services.AddSignalR();
 builder.Services.AddAuthentication(options =>
 {
     options.DefaultAuthenticateScheme = JwtBearerDefaults.AuthenticationScheme;
@@ -190,5 +194,5 @@ app.UseAuthentication();
 app.UseAuthorization();
 
 app.MapControllers();
-
+app.MapHub<ChatHub>("/chatHub");
 app.Run();
