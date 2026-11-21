@@ -34,23 +34,5 @@ namespace BLL.Services
             message.To.Add(to);
             var response = await resendClient.EmailSendAsync(message);
         }
-        public async Task<List<Message>> GetReceivedEmailsAsync(Ticket ticket)
-        {
-            var response = await resendClient.ReceivedEmailListAsync();
-            if (response.Content == null) return [];
-            var user = await userManager.FindByIdAsync(ticket.UserId);
-            var messages = response.Content.Data
-        .Where(e => string.Equals(e.From.Email, user.Email, StringComparison.OrdinalIgnoreCase) && (DateTime.UtcNow - e.MomentCreated) <= TimeSpan.FromMinutes(15))
-        .Select(e => new Message
-        {
-            Id = e.Id.ToString(),
-            TicketId = ticket.Id,
-            SenderId = ticket.UserId,
-            SendedAt = e.MomentCreated ?? DateTime.UtcNow,
-            Content = e.TextBody ?? e.HtmlBody ?? string.Empty,
-            FilePath = e.Attachments?.FirstOrDefault()?.Filename
-        }).ToList();
-            return messages;
-        }
     }
 }
