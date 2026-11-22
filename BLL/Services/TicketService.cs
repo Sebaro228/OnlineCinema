@@ -130,6 +130,11 @@ namespace BLL.Services
             }
             return (true, null);
         }
+        public async Task<Ticket?> GetTicketByUserId(string userId)
+        {
+            var tickets = await GetAllAsync();
+            return tickets.FirstOrDefault(t => (t.UserId == userId || t.AgentId == userId) && t.IsOpen);
+        }
         public async Task<(bool success, string? message)> HandleEmailReceived(ResendWebhookPayload payload) 
         {
             if (payload.Type != "email.received" || payload.Data == null)   

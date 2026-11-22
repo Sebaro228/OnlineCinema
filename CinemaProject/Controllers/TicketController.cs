@@ -47,6 +47,15 @@ namespace CinemaProject.Controllers
             if (!res.success) return BadRequest(res.message);
             return Ok();
         }
+        [HttpGet("GetTicketByUserId")]
+        public async Task<IActionResult> GetTicketByUserId()
+        {
+            var userId = User.FindFirstValue(ClaimTypes.NameIdentifier);
+            if (userId == null) return Unauthorized();
+            var ticket = await ticketService.GetTicketByUserId(userId);
+            if (ticket == null) return NotFound();
+            return Ok(ticket);
+        }
         [AllowAnonymous]
         [HttpPost("HandleEmailReceived")]
         public async Task<IActionResult> HandleEmailReceived([FromBody] ResendWebhookPayload payload)
