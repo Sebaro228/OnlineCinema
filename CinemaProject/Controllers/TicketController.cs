@@ -21,6 +21,7 @@ namespace CinemaProject.Controllers
             return Ok();
         }
         [HttpPost("AcceptTicket/{ticketId}")]
+        [Authorize(Roles = "SupportAgent")]
         public async Task<IActionResult> AcceptTicket(string ticketId, [FromBody] MessageDto message)
         {
             var agentId = User.FindFirstValue(ClaimTypes.NameIdentifier);
