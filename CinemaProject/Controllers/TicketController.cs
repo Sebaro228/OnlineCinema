@@ -17,8 +17,9 @@ namespace CinemaProject.Controllers
         {
             var userId = User.FindFirstValue(ClaimTypes.NameIdentifier);
             if (userId == null) return Unauthorized();
-            await ticketService.CreateTicket(request, userId);
-            return Ok();
+            var ticket = await ticketService.CreateTicket(request, userId);
+            if (ticket == null) return BadRequest("Open ticket already exists");
+            return Ok(ticket);
         }
         [HttpPost("AcceptTicket/{ticketId}")]
         [Authorize(Roles = "SupportAgent")]

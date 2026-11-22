@@ -35,9 +35,12 @@ namespace BLL.Services
             _chatHub = chatHub; 
         }
 
-        public async Task CreateTicket(CreateTicket request, string userId)
+        public async Task<Ticket?> CreateTicket(CreateTicket request, string userId)
         {
-            var ticket = new Ticket
+            var tickets = await GetAllAsync();
+            var ticket = tickets.FirstOrDefault(t => t.UserId == userId && t.IsOpen);
+            if (ticket != null) return null;
+            ticket = new Ticket
             {
                 Topic = request.Topic,
                 UserId = userId,
@@ -60,6 +63,7 @@ namespace BLL.Services
                 });
             }
             await CreateAsync(ticket);
+            return ticket;  
         }
         public async Task<(bool success, string? message)> AcceptTicket(string ticketId, string agentId, MessageDto message)
         {
