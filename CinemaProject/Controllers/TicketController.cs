@@ -32,18 +32,18 @@ namespace CinemaProject.Controllers
         [HttpPost("Responce/{ticketId}")]
         public async Task<IActionResult> Responce(string ticketId, [FromBody] MessageDto message)
         {
-            var agentId = User.FindFirstValue(ClaimTypes.NameIdentifier);
-            if (agentId == null) return Unauthorized();
-            var res = await ticketService.Responce(ticketId, agentId, message);
+            var id = User.FindFirstValue(ClaimTypes.NameIdentifier);
+            if (id == null) return Unauthorized();
+            var res = await ticketService.Responce(ticketId, id, message);
             if (!res.success) return BadRequest(res.message);
             return Ok();
         }
         [HttpPost("CloseTicket/{ticketId}")]
         public async Task<IActionResult> CloseTicket(string ticketId)
         {
-            var agentId = User.FindFirstValue(ClaimTypes.NameIdentifier);
-            if (agentId == null) return Unauthorized();
-            var res = await ticketService.CloseTicket(ticketId, agentId);
+            var id = User.FindFirstValue(ClaimTypes.NameIdentifier);
+            if (id == null) return Unauthorized();
+            var res = await ticketService.CloseTicket(ticketId, id);
             if (!res.success) return BadRequest(res.message);
             return Ok();
         }

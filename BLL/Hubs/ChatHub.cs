@@ -1,4 +1,6 @@
-﻿using Microsoft.AspNetCore.SignalR;
+﻿using Domain.DTOs;
+using Domain.Models;
+using Microsoft.AspNetCore.SignalR;
 using System;
 using System.Collections.Generic;
 using System.Linq;
@@ -18,9 +20,14 @@ namespace BLL.Hubs
             await Groups.RemoveFromGroupAsync(Context.ConnectionId, chatRoomName);
             await Clients.Group(chatRoomName).SendAsync("UserLeft", $"{userName} left the chat.");
         }
-        public async Task SendMessageToChat(string chatRoomName, string userName, string message)
+        public async Task SendMessageToChat(string chatRoomName, string userName, MessageDto message)
         {
-            await Clients.Group(chatRoomName).SendAsync("ReceiveMessage", userName, message);
+            await Clients.Group(chatRoomName).SendAsync("ReceiveMessage", userName, message.Content);
+            if (File.Exists(message.FilePath))
+            {
+                var bytes = await System.IO.File.ReadAllBytesAsync(message.FilePath);
+                await Clients.Group(chatRoomName).SendAsync("ReceiveFile", userName, bytes);
+            }
         }
     }
 }
