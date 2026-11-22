@@ -112,6 +112,7 @@ builder.Services.AddScoped<IParticipantService, ParticipantService>();
 builder.Services.AddScoped<IFilmParticipationRepository, FilmParticipationRepository>();
 builder.Services.AddScoped<IFilmParticipationService, FilmParticipationService>();
 builder.Services.AddScoped<IRepository<Ticket>, TicketRepository>();
+builder.Services.AddScoped<IService<Ticket>, TicketService>();
 
 builder.Services.AddScoped<UserService>();
 builder.Services.AddScoped<RefreshTokenRepository>();
@@ -121,6 +122,8 @@ builder.Services.AddScoped<ProfileService>();
 builder.Services.AddScoped<UserRepository>();
 builder.Services.AddScoped<TicketService>();
 builder.Services.AddTransient<EmailService>();
+
+builder.Services.AddScoped<ChatHub>();
 
 builder.Services.AddSignalR(o => o.MaximumReceiveMessageSize = 100 * 1024 * 1024);
 builder.Services.AddAuthentication(options =>
