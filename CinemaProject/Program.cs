@@ -74,7 +74,7 @@ builder.Services.AddSwaggerGen(options =>
 
 builder.Services.AddDbContext<CinemaContext>(opts =>
     opts.UseSqlServer(
-        builder.Configuration.GetConnectionString("CinemaDb"),
+        builder.Configuration.GetConnectionString("CinemaDBReserve1"),
         sqlOpts => sqlOpts.EnableRetryOnFailure()
     ));
 
