@@ -48,6 +48,10 @@ namespace DAL.Context
             modelBuilder.Entity<FilmParticipation>()
                 .HasIndex(fp => new { fp.FilmId, fp.ParticipantId, fp.ParticipantRoles })
                 .IsUnique();
+
+            modelBuilder.Entity<User>()
+                .HasMany(u => u.Favorites)
+                .WithMany(f => f.FavoritedBy);
         }
     }
 }

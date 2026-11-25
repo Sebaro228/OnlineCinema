@@ -98,8 +98,8 @@ builder.Services.AddResend(options =>
     options.ApiToken = emailKey;
 });
 
-builder.Services.AddScoped<IService<Film>, FilmService>();
-builder.Services.AddScoped<IRepository<Film>, FilmRepository>();
+//builder.Services.AddScoped<IService<Film>, FilmService>();
+//builder.Services.AddScoped<IRepository<Film>, FilmRepository>();
 builder.Services.AddScoped<IService<User>, UserService>();
 builder.Services.AddScoped<IRepository<RefreshToken>, RefreshTokenRepository>();
 builder.Services.AddScoped<IRepository<User>, UserRepository>();
@@ -111,6 +111,7 @@ builder.Services.AddScoped<IParticipantRepository, ParticipantRepository>();
 builder.Services.AddScoped<IParticipantService, ParticipantService>();
 builder.Services.AddScoped<IFilmParticipationRepository, FilmParticipationRepository>();
 builder.Services.AddScoped<IFilmParticipationService, FilmParticipationService>();
+builder.Services.AddScoped<IFavoritesService, FavoritesService>();
 
 builder.Services.AddScoped<UserService>();
 builder.Services.AddScoped<RefreshTokenRepository>();
@@ -152,7 +153,8 @@ builder.Services.AddCors(options =>
                 "http://localhost:5173/"
               )
               .AllowAnyHeader()
-              .AllowAnyMethod();
+              .AllowAnyMethod()
+              .AllowCredentials();
     });
 });
 

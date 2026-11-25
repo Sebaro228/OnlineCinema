@@ -1,4 +1,5 @@
 ﻿using Domain.Linking;
+using System.Text.Json.Serialization;
 
 namespace Domain.Models
 {
@@ -17,5 +18,7 @@ namespace Domain.Models
         public string VideoBlobPath { get; set; } = string.Empty;
         public List<Trailer> Trailers { get; set; } = new();
         public List<FilmParticipation> Participations { get; set; } = new();
+        [JsonIgnore]
+        public List<User> FavoritedBy { get; set; } = new();
     }
 }

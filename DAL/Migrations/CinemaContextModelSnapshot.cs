@@ -252,6 +252,21 @@ namespace DAL.Migrations
                     b.ToTable("AspNetUsers", (string)null);
                 });
 
+            modelBuilder.Entity("FilmUser", b =>
+                {
+                    b.Property<string>("FavoritedById")
+                        .HasColumnType("nvarchar(450)");
+
+                    b.Property<string>("FavoritesId")
+                        .HasColumnType("nvarchar(450)");
+
+                    b.HasKey("FavoritedById", "FavoritesId");
+
+                    b.HasIndex("FavoritesId");
+
+                    b.ToTable("FilmUser");
+                });
+
             modelBuilder.Entity("Microsoft.AspNetCore.Identity.IdentityRole", b =>
                 {
                     b.Property<string>("Id")
@@ -424,6 +439,21 @@ namespace DAL.Migrations
                         .IsRequired();
 
                     b.Navigation("Film");
+                });
+
+            modelBuilder.Entity("FilmUser", b =>
+                {
+                    b.HasOne("Domain.Models.User", null)
+                        .WithMany()
+                        .HasForeignKey("FavoritedById")
+                        .OnDelete(DeleteBehavior.Cascade)
+                        .IsRequired();
+
+                    b.HasOne("Domain.Models.Film", null)
+                        .WithMany()
+                        .HasForeignKey("FavoritesId")
+                        .OnDelete(DeleteBehavior.Cascade)
+                        .IsRequired();
                 });
 
             modelBuilder.Entity("Microsoft.AspNetCore.Identity.IdentityRoleClaim<string>", b =>
