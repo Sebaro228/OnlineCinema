@@ -14,12 +14,12 @@ namespace Domain.Linking
 
         public string ParticipantId { get; set; } = string.Empty;
         [JsonIgnore]
-        public Participant Participant { get; set; } = new();
+        public Participant Participant { get; set; }
 
         public string FilmId { get; set; } = string.Empty;
         [JsonIgnore]
-        public Film Film { get; set; } = new();
+        public Film Film { get; set; }
 
-        public string ParticipantRole { get; set; } = string.Empty;
+        public List<string> ParticipantRoles { get; set; } = new();
     }
 }

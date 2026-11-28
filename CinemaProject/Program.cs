@@ -99,18 +99,20 @@ builder.Services.AddResend(options =>
     options.ApiToken = emailKey;
 });
 
-builder.Services.AddScoped<IService<Film>, FilmService>();
-builder.Services.AddScoped<IRepository<Film>, FilmRepository>();
+//builder.Services.AddScoped<IService<Film>, FilmService>();
+//builder.Services.AddScoped<IRepository<Film>, FilmRepository>();
 builder.Services.AddScoped<IService<User>, UserService>();
 builder.Services.AddScoped<IRepository<RefreshToken>, RefreshTokenRepository>();
 builder.Services.AddScoped<IRepository<User>, UserRepository>();
 
 builder.Services.AddScoped<IFilmService, FilmService>();
+builder.Services.AddScoped<IFilmSearchService, FilmSearchService>();
 builder.Services.AddScoped<IFilmRepository, FilmRepository>();
 builder.Services.AddScoped<IParticipantRepository, ParticipantRepository>();
 builder.Services.AddScoped<IParticipantService, ParticipantService>();
 builder.Services.AddScoped<IFilmParticipationRepository, FilmParticipationRepository>();
 builder.Services.AddScoped<IFilmParticipationService, FilmParticipationService>();
+builder.Services.AddScoped<IFavoritesService, FavoritesService>();
 builder.Services.AddScoped<IRepository<Ticket>, TicketRepository>();
 builder.Services.AddScoped<IService<Ticket>, TicketService>();
 

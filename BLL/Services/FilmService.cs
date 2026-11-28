@@ -78,20 +78,10 @@ namespace BLL.Services
             }
         }
 
-        public Task CratePosterAsync(Film f, Stream s)
-            => UpdatePosterAsync(f, s, f.PosterExtension, f.PosterMime);
-
         public async Task CreateTrailerDataAsync(Film f, Trailer t)
         {
             await _repository.SaveTrailerDataAsync(f, t);
         }
-
-        public Task CreateTrailerFileAsync(Trailer t, Stream s)
-            => UpdateTrailerFileAsync(t, s, t.Extension, t.Mime);
-
-        public Task CreateVideoAsync(Film f, Stream s)
-            => UpdateVideoAsync(f, s, f.VideoExtension, f.VideoMime);
-
 
         public async Task DeletePosterAsync(Film f)
         {

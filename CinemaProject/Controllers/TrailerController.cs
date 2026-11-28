@@ -40,25 +40,31 @@ namespace CinemaProject.Controllers
         //[Authorize(Roles = "ContentManager")]
         public async Task<IActionResult> CreateTrailer(TrailerDto dto)
         {
-            Film? f = await _service.GetAsync(dto.FilmId);
-            if (f is null)
-                return NotFound("The film was not found");
-
-            if (string.IsNullOrEmpty(dto.Title))
+            if (dto is null)
+                return BadRequest("The trailer data can not be null");
+            if (string.IsNullOrWhiteSpace(dto.FilmId))
+                return BadRequest("A film id can not be empty");
+            if (string.IsNullOrWhiteSpace(dto.Title))
                 return BadRequest("A title can not be empty");
             if (dto.Date == default || dto.Date > DateOnly.FromDateTime(DateTime.UtcNow))
                 return BadRequest("A date is not suitable");
 
+            Film? f = await _service.GetAsync(dto.FilmId);
+            if (f is null)
+                return NotFound("The film was not found");
+
             Trailer t = _mapper.Map<Trailer>(dto);
 
             await _service.CreateTrailerDataAsync(f, t);
-            return Ok(t.Id);
+            return Ok(t);
         }
 
         [HttpPost("CreateFile")]
         //[Authorize(Roles = "ContentManager")]
         public async Task<IActionResult> CreateTrailerFile(string trailerId, IFormFile trailer)
         {
+            if (string.IsNullOrWhiteSpace(trailerId))
+                return BadRequest("A trailer id can not be empty");
             if (trailer is null)
                 return BadRequest("The trailer is null");
             if (trailer.Length <= 0)
@@ -89,6 +95,9 @@ namespace CinemaProject.Controllers
         //[Authorize(Roles = "ContentManager")]
         public async Task<IActionResult> DeleteTrailerData(string trailerId)
         {
+            if (string.IsNullOrWhiteSpace(trailerId))
+                return BadRequest("A trailer id can not be empty");
+
             Trailer? t = await _service.GetTrailerDataAsync(trailerId);
             if (t is null)
                 return NotFound();
@@ -101,6 +110,9 @@ namespace CinemaProject.Controllers
         [HttpGet("Get")]
         public async Task<IActionResult> GetTrailer(string trailerId)
         {
+            if (string.IsNullOrWhiteSpace(trailerId))
+                return BadRequest("A trailer id can not be empty");
+
             Trailer? t = await _service.GetTrailerDataAsync(trailerId);
             if (t is null)
                 return NotFound();
@@ -111,6 +123,9 @@ namespace CinemaProject.Controllers
         [HttpGet("GetFile")]
         public async Task<IActionResult> GetTrailerStream(string trailerId)
         {
+            if (string.IsNullOrWhiteSpace(trailerId))
+                return BadRequest("A trailer id can not be empty");
+
             Trailer? t = await _service.GetTrailerDataAsync(trailerId);
             if (t is null)
                 return NotFound("The trailer has not been found");
@@ -122,6 +137,9 @@ namespace CinemaProject.Controllers
         [HttpGet("GetAllTrailersData")]
         public async Task<IActionResult> GetAllTrailersData(string filmId)
         {
+            if (string.IsNullOrWhiteSpace(filmId))
+                return BadRequest("A film id can not be empty");
+
             Film? f = await _service.GetAsync(filmId);
             if (f is null)
                 return NotFound("The film was not found");
@@ -133,11 +151,23 @@ namespace CinemaProject.Controllers
         //[Authorize(Roles = "ContentManager")]
         public async Task<IActionResult> UpdateTrailerData(string id, TrailerDto dto)
         {
+            if (string.IsNullOrWhiteSpace(id))
+                return BadRequest("A trailer id can not be empty");
+            if (dto is null)
+                return BadRequest("The trailer data can not be null");
+            if (string.IsNullOrWhiteSpace(dto.FilmId) &&
+                string.IsNullOrWhiteSpace(dto.Title) && dto.Date == default)
+                return BadRequest("At least one field must be provided for update");
+            if (!string.IsNullOrEmpty(dto.FilmId) && string.IsNullOrWhiteSpace(dto.FilmId))
+                return BadRequest("A film id can not be empty");
+            if (!string.IsNullOrEmpty(dto.Title) && string.IsNullOrWhiteSpace(dto.Title))
+                return BadRequest("A title can not be empty");
+
             Trailer? t = await _service.GetTrailerDataAsync(id);
             if (t is null)
                 return NotFound("The trailer has not been found");
 
-            if (!string.IsNullOrEmpty(dto.FilmId))
+            if (!string.IsNullOrWhiteSpace(dto.FilmId))
             {
                 Film? newFilm = await _service.GetAsync(dto.FilmId);
                 if (newFilm is null)
@@ -147,7 +177,7 @@ namespace CinemaProject.Controllers
                 t.Film = newFilm;
             }
 
-            if(!string.IsNullOrEmpty(dto.Title))
+            if (!string.IsNullOrWhiteSpace(dto.Title))
                 t.Title = dto.Title;
             if(dto.Date != default && dto.Date < DateOnly.FromDateTime(DateTime.UtcNow))
                 t.Date = dto.Date;
@@ -159,14 +189,16 @@ namespace CinemaProject.Controllers
         //[Authorize(Roles = "ContentManager")]
         public async Task<IActionResult> UpdateTrailerFile(string trailerId, IFormFile trailer)
         {
-            Trailer? t = await _service.GetTrailerDataAsync(trailerId);
-            if (t is null)
-                return NotFound("A trailer has not been found");
-
+            if (string.IsNullOrWhiteSpace(trailerId))
+                return BadRequest("A trailer id can not be empty");
             if (trailer is null)
                 return BadRequest("The trailer is null");
             if (trailer.Length <= 0)
                 return BadRequest("The trailer size is 0");
+
+            Trailer? t = await _service.GetTrailerDataAsync(trailerId);
+            if (t is null)
+                return NotFound("A trailer has not been found");
 
             string mime = trailer.ContentType;
             string ext = Path.GetExtension(trailer.FileName);

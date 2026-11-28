@@ -23,7 +23,9 @@ namespace CinemaProject.Controllers
         [HttpPost("Create")]
         public async Task<IActionResult> CreateParticipant(ParticipantDto dto) 
         {
-            if (string.IsNullOrEmpty(dto.FullName))
+            if (dto is null)
+                return BadRequest("The participant data can not be null");
+            if (string.IsNullOrWhiteSpace(dto.FullName))
                 return BadRequest("A field \"FullName\" can not be empty");
             if (dto.Age == 0)
                 return BadRequest("A field \"Age\" can not equal 0");
@@ -36,6 +38,9 @@ namespace CinemaProject.Controllers
         [HttpDelete("Delete")]
         public async Task<IActionResult> DeleteParticipant(string id)
         {
+            if (string.IsNullOrWhiteSpace(id))
+                return BadRequest("A participant id can not be empty");
+
             Participant? p = await _service.GetAsync(id);
             if (p is null)
                 return NotFound();
@@ -47,6 +52,9 @@ namespace CinemaProject.Controllers
         [HttpGet("Get")]
         public async Task<IActionResult> GetParticipant(string id)
         {
+            if (string.IsNullOrWhiteSpace(id))
+                return BadRequest("A participant id can not be empty");
+
             Participant? p = await _service.GetAsync(id);
             if (p is null)
                 return NotFound();
@@ -62,11 +70,20 @@ namespace CinemaProject.Controllers
         [HttpPut("Update")]
         public async Task<IActionResult> UpdateParticipant(string id, ParticipantDto dto)
         {
+            if (string.IsNullOrWhiteSpace(id))
+                return BadRequest("A participant id can not be empty");
+            if (dto is null)
+                return BadRequest("The participant data can not be null");
+            if (string.IsNullOrWhiteSpace(dto.FullName) && dto.Age == 0)
+                return BadRequest("At least one field must be provided for update");
+            if (!string.IsNullOrEmpty(dto.FullName) && string.IsNullOrWhiteSpace(dto.FullName))
+                return BadRequest("A field \"FullName\" can not be empty");
+
             Participant? p = await _service.GetAsync(id);
             if (p is null)
                 return NotFound();
 
-            if (!string.IsNullOrEmpty(dto.FullName))
+            if (!string.IsNullOrWhiteSpace(dto.FullName))
                 p.FullName = dto.FullName;
             if (dto.Age != 0)
                 p.Age = dto.Age;
