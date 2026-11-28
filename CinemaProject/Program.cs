@@ -125,8 +125,6 @@ builder.Services.AddScoped<UserRepository>();
 builder.Services.AddScoped<TicketService>();
 builder.Services.AddTransient<EmailService>();
 
-builder.Services.AddScoped<ChatHub>();
-
 builder.Services.AddSignalR(o => o.MaximumReceiveMessageSize = 100 * 1024 * 1024);
 builder.Services.AddAuthentication(options =>
 {

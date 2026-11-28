@@ -18,7 +18,7 @@ namespace BLL.Services
             var user = await manager.FindByIdAsync(id);
             if (user == null) throw new Exception("User not found");
             var userDto = mapper.Map<UserDto>(user);
-            userDto.Role = (await manager.GetRolesAsync(user)).First();
+            userDto.Roles = (await manager.GetRolesAsync(user)).ToList();
             return userDto;
         }
         public async Task UpdateProfileAsync(string id, UpdateProfile updateProfileDTO)

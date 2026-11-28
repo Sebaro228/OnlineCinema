@@ -49,6 +49,13 @@ namespace CinemaProject.Controllers
             if (!res.success) return BadRequest(res.message);
             return Ok();
         }
+        [HttpGet("GetOpenedTickets")]
+        [Authorize(Roles = "SupportAgent")]
+        public async Task<IActionResult> GetOpenedTickets()
+        {
+            var tickets = await ticketService.GetOpenedTickets();
+            return Ok(tickets);
+        }
         [HttpGet("GetTicketByUserId")]
         public async Task<IActionResult> GetTicketByUserId()
         {

@@ -4,6 +4,7 @@ using Domain.DTOs;
 using Domain.Enums;
 using Domain.Models;
 using Microsoft.AspNetCore.Identity;
+using Microsoft.AspNetCore.SignalR;
 using Microsoft.Extensions.Configuration;
 using Microsoft.Extensions.Logging;
 using Resend;
@@ -24,15 +25,15 @@ namespace BLL.Services
         UserManager<User> _userManager;
         IConfiguration _configuration;
         IResend _resendClient;
-        ChatHub _chatHub;
-        public TicketService(IRepository<Ticket> rep, EmailService emailService, UserManager<User> userManager, IConfiguration configuration, IResend resendClient, ChatHub chatHub) : base(rep)
+        IHubContext<ChatHub> _hubContext;
+        public TicketService(IRepository<Ticket> rep, EmailService emailService, UserManager<User> userManager, IConfiguration configuration, IResend resendClient, IHubContext<ChatHub> hubContext) : base(rep)
         {
             _rep = rep;
             _emailService = emailService;
             _userManager = userManager;
             _configuration = configuration;
             _resendClient = resendClient;
-            _chatHub = chatHub; 
+            _hubContext = hubContext;
         }
 
         public async Task<Ticket?> CreateTicket(CreateTicket request, string userId)
@@ -55,12 +56,14 @@ namespace BLL.Services
             if (ticket.ConversationType == Conversation.LiveChat)
             {
                 var user = await _userManager.FindByIdAsync(userId);
-                await _chatHub.JoinChat(ticket.Id, user.UserName);
-                await _chatHub.SendMessageToChat(ticket.Id, user.UserName, new MessageDto
+                if (user != null)
                 {
-                    Content = request.FirstMessage,
-                    FilePath = request.FilePath
-                });
+                    await SendChatMessageAsync(ticket.Id, user.UserName!, new MessageDto
+                    {
+                        Content = request.FirstMessage,
+                        FilePath = request.FilePath
+                    });
+                }
             }
             await CreateAsync(ticket);
             return ticket;  
@@ -73,13 +76,13 @@ namespace BLL.Services
             if (!string.IsNullOrEmpty(ticket.AgentId)) return (false, "Ticket is already accepted by another agent");
             ticket.AgentId = agentId;
             await UpdateAsync(ticket);
-            if (ticket.ConversationType == Conversation.LiveChat)
-            {
-                var user = await _userManager.FindByIdAsync(agentId);
-                await _chatHub.JoinChat(ticket.Id, user.UserName);
-            }
             var responce = await Responce(ticketId, agentId, message);
             return responce;
+        }
+        public async Task<List<Ticket>> GetOpenedTickets()
+        {
+            var tickets = await GetAllAsync();
+            return tickets.Where(x => x.IsOpen).ToList();
         }
         public async Task<(bool success, string? message)> Responce(string ticketId, string id, MessageDto message) 
         {
@@ -106,12 +109,14 @@ namespace BLL.Services
                 if (ticket.AgentId == id)
                 {
                     var agent = await _userManager.FindByIdAsync(ticket.AgentId);
-                    await _chatHub.SendMessageToChat(ticket.Id, agent.UserName, message);
+                    if (agent != null)
+                        await SendChatMessageAsync(ticket.Id, agent.UserName!, message);
                 }
                 else if (ticket.UserId == id)
                 {
                     var user = await _userManager.FindByIdAsync(ticket.UserId);
-                    await _chatHub.SendMessageToChat(ticket.Id, user.UserName, message);
+                    if (user != null)
+                        await SendChatMessageAsync(ticket.Id, user.UserName!, message);
                 }
             }
             return (true, null);
@@ -127,12 +132,19 @@ namespace BLL.Services
             await UpdateAsync(ticket);
             if (ticket.ConversationType == Conversation.LiveChat)
             {
-                var user = await _userManager.FindByIdAsync(ticket.UserId);
-                var agent = await _userManager.FindByIdAsync(ticket.AgentId);
-                _chatHub.LeaveChat(ticket.Id, user.UserName);
-                _chatHub.LeaveChat(ticket.Id, agent.UserName);
+                await _hubContext.Clients.Group(ticket.Id).SendAsync("TicketClosed", ticket.Id);
             }
             return (true, null);
+        }
+
+        private async Task SendChatMessageAsync(string chatRoomName, string userName, MessageDto message)
+        {
+            await _hubContext.Clients.Group(chatRoomName).SendAsync("ReceiveMessage", userName, message.Content);
+            if (!string.IsNullOrEmpty(message.FilePath) && File.Exists(message.FilePath))
+            {
+                var bytes = await File.ReadAllBytesAsync(message.FilePath);
+                await _hubContext.Clients.Group(chatRoomName).SendAsync("ReceiveFile", userName, bytes);
+            }
         }
         public async Task<Ticket?> GetTicketByUserId(string userId)
         {
